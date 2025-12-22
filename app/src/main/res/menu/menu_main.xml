@@ -17,4 +17,9 @@
         android:orderInCategory="100"
         android:title="选择文档"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_scanner"
+        android:orderInCategory="100"
+        android:title="scanner"
+        app:showAsAction="never" />
 </menu>
