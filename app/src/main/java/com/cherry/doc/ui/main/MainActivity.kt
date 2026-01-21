@@ -1,4 +1,4 @@
-package com.cherry.doc
+package com.cherry.doc.ui.main
 
 import android.Manifest
 import android.content.Intent
@@ -11,11 +11,12 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.View.OnClickListener
 import android.widget.AdapterView
-import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.cherry.doc.ui.adapter.DocAdapter
+import com.cherry.doc.R
+import com.cherry.doc.ui.scanner.ScannerActivity
 import com.cherry.doc.util.BasicSet
 import com.cherry.doc.util.DocUtil
 import com.cherry.doc.util.WordUtils
@@ -24,7 +25,6 @@ import com.cherry.lib.doc.bean.DocSourceType
 import com.cherry.lib.doc.bean.FileType
 import com.cherry.lib.doc.util.FileUtils
 import com.cherry.permissions.lib.EasyPermissions
-import com.cherry.permissions.lib.EasyPermissions.hasPermissions
 import com.cherry.permissions.lib.annotations.AfterPermissionGranted
 import com.cherry.permissions.lib.dialogs.SettingsDialog
 import com.google.android.material.appbar.MaterialToolbar
@@ -32,8 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
-class MainActivity : AppCompatActivity(), OnClickListener, OnItemClickListener,
+class MainActivity : AppCompatActivity(), View.OnClickListener, AdapterView.OnItemClickListener,
     EasyPermissions.PermissionCallbacks {
     companion object {
         const val REQUEST_CODE_STORAGE_PERMISSION = 124
@@ -65,8 +64,8 @@ class MainActivity : AppCompatActivity(), OnClickListener, OnItemClickListener,
             val isExternalStorageManager = Environment.isExternalStorageManager()
             return isExternalStorageManager
         }
-        val read = hasPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-        val write = hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val read = EasyPermissions.hasPermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val write = EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         return read && write
     }
@@ -182,7 +181,7 @@ class MainActivity : AppCompatActivity(), OnClickListener, OnItemClickListener,
     }
 
     fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
-        DocViewerActivity.launchDocViewer(this, docSourceType, path, type)
+        DocViewerActivity.Companion.launchDocViewer(this, docSourceType, path, type)
     }
 
     override fun onItemClick(p0: AdapterView<*>?, v: View?, position: Int, id: Long) {

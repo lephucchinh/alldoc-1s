@@ -1,6 +1,5 @@
-package com.cherry.doc
+package com.cherry.doc.ui.scanner
 
-import android.app.Activity.RESULT_OK
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -34,10 +33,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.cherry.doc.R
 import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
-import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.RESULT_FORMAT_JPEG
-import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.RESULT_FORMAT_PDF
-import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions.SCANNER_MODE_FULL
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import com.scode.documentscannerapp_compose.ui.theme.DocumentScannerAppComposeTheme
@@ -49,17 +46,20 @@ class ScannerActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val options = GmsDocumentScannerOptions.Builder()
-            .setScannerMode(SCANNER_MODE_FULL)
+            .setScannerMode(GmsDocumentScannerOptions.SCANNER_MODE_FULL)
             .setGalleryImportAllowed(true)
             .setPageLimit(5)
-            .setResultFormats(RESULT_FORMAT_JPEG, RESULT_FORMAT_PDF)
+            .setResultFormats(
+                GmsDocumentScannerOptions.RESULT_FORMAT_JPEG,
+                GmsDocumentScannerOptions.RESULT_FORMAT_PDF
+            )
             .build()
 
         val scanner = GmsDocumentScanning.getClient(options)
         setContent {
             DocumentScannerAppComposeTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.Companion.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 )
                 {
@@ -87,18 +87,18 @@ class ScannerActivity : ComponentActivity() {
                         }
                     )
                     Column(
-                        modifier = Modifier
+                        modifier = Modifier.Companion
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.Companion.CenterHorizontally
                     ) {
                         imageUris.forEach { uri ->
                             AsyncImage(
                                 model = uri,
                                 contentDescription = null,
-                                contentScale = ContentScale.FillWidth,
-                                modifier = Modifier.fillMaxWidth()
+                                contentScale = ContentScale.Companion.FillWidth,
+                                modifier = Modifier.Companion.fillMaxWidth()
                             )
                         }
                         Button(
@@ -118,11 +118,11 @@ class ScannerActivity : ComponentActivity() {
                                     }
                             }, shape = RoundedCornerShape(30.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.purple_700)),
-                            modifier = Modifier
+                            modifier = Modifier.Companion
                                 .fillMaxWidth()
                                 .padding(25.dp)
                         ) {
-                            Text(text = "Scan PDF", color = Color.White)
+                            Text(text = "Scan PDF", color = Color.Companion.White)
                         }
                     }
 

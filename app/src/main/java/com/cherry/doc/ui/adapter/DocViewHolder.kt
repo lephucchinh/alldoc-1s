@@ -1,10 +1,11 @@
-package com.cherry.doc
+package com.cherry.doc.ui.adapter
 
 import android.view.View
 import android.view.View.OnClickListener
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.cherry.doc.R
 import com.cherry.doc.data.DocGroupInfo
 
 /*

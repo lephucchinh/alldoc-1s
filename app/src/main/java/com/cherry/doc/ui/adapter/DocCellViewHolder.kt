@@ -1,4 +1,4 @@
-package com.cherry.doc
+package com.cherry.doc.ui.adapter
 
 import android.view.View
 import android.view.View.OnClickListener
@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
 import com.cherry.lib.doc.bean.FileType
 import com.cherry.lib.doc.util.FileUtils

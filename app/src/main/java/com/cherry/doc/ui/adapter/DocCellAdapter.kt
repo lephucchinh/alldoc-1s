@@ -1,4 +1,4 @@
-package com.cherry.doc
+package com.cherry.doc.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
+import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
 
 /*
