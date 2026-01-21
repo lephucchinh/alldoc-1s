@@ -14,6 +14,7 @@ class AllFileFragment : Fragment() {
 
     private var _binding: FragmentHomeAllFilesBinding? = null
     private val binding get() = _binding!!
+    lateinit var allFilePagerAdapter: AllFilePagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,9 +31,8 @@ class AllFileFragment : Fragment() {
     }
 
     private fun setupViewPager() {
-        binding.viewPager.adapter = AllFilePagerAdapter(this)
-
-        // ❌ nếu không cho swipe
+        allFilePagerAdapter = AllFilePagerAdapter(this)
+        binding.viewPager.adapter = allFilePagerAdapter
         binding.viewPager.isUserInputEnabled = false
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

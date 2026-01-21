@@ -10,7 +10,6 @@ import com.cherry.doc.ui.allfile.pager.WordTabPager
 class AllFilePagerAdapter(
     fragment: Fragment,
 ) : FragmentStateAdapter(fragment) {
-
     override fun getItemCount(): Int = 5
 
     override fun createFragment(position: Int): Fragment {
