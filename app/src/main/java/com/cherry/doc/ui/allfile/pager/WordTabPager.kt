@@ -1,19 +1,176 @@
 package com.cherry.doc.ui.allfile.pager
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.cherry.doc.R
+import com.cherry.doc.data.DocInfo
+import com.cherry.doc.databinding.PageAllFileBinding
+import com.cherry.doc.ui.allfile.AllFileViewModel
+import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
+import com.cherry.doc.ui.main.MainActivity
+import com.cherry.permissions.lib.EasyPermissions
+import com.cherry.permissions.lib.annotations.AfterPermissionGranted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.collections.orEmpty
+import kotlin.getValue
 
 class WordTabPager : Fragment() {
+
+    private var _binding: PageAllFileBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: AllFileViewModel by activityViewModels()
+
+    private lateinit var adapter: AllFileAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        return inflater.inflate(R.layout.page_all_file, container, false)
+        _binding = PageAllFileBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        loadData()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = AllFileAdapter(listener = object : AllFileAdapter.Listener {
+            override fun onItemClick(item: DocInfo) {
+                // TODO: open file
+            }
+
+            override fun onShare(item: DocInfo) {
+                // TODO: share file
+            }
+
+            override fun onRename(item: DocInfo) {
+                // TODO: rename file
+            }
+
+            override fun onOption(item: DocInfo) {
+                // TODO: show bottom sheet / popup
+            }
+        })
+
+        binding.rcvFiles.adapter = adapter
+        binding.rcvFiles.setHasFixedSize(true)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11) {
+            if (hasRwPermission()) {
+                requestStoragePermission()
+            }
+        }/* else if (requestCode == MainActivity.Companion.REQUEST_CODE_SELECT_DOCUMENT && resultCode == RESULT_OK) {
+            val documentUri = data?.data
+            Log.d(TAG, "documentUri = $documentUri")
+            documentUri?.let {
+                openDoc(it.toString(), DocSourceType.URI, null)
+            }
+
+        }*/
+    }
+
+
+    private fun loadData() {
+        viewModel.allFiles.observe(viewLifecycleOwner) { groups ->
+            Log.d("AllFilePager", "groups size = ${groups.size}")
+
+            val allFiles = groups.flatMap { it.docList.orEmpty() }
+            Log.d("AllFilePager", "files size = ${allFiles.size}")
+
+            adapter.submitList(allFiles.filter { isSupportedDoc(it) })
+        }
+        requestStoragePermission()
+
+    }
+
+    fun isSupportedDoc(docInfo: DocInfo): Boolean {
+        val name = docInfo.fileName?.lowercase() ?: return false
+        return name.endsWith(".doc")
+                || name.endsWith(".docx")
+
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
+    @AfterPermissionGranted(MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION)
+    private fun requestStoragePermission() {
+        if (hasRwPermission()) {
+            // Have permission, do things!
+            CoroutineScope(Dispatchers.Main).launch {
+                viewModel.loadAllFiles()
+            }
+
+        } else {
+            // Ask for one permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                get11Permission()
+                return
+            }
+            EasyPermissions.requestPermissions(
+                this,
+                "This app needs access to your storage to load local doc",
+                MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        }
+    }
+
+    fun get11Permission() {
+        try {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            intent.addCategory("android.intent.category.DEFAULT")
+            intent.data =
+                Uri.parse(java.lang.String.format("package:%s", requireActivity().packageName))
+            startActivityForResult(intent, MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11)
+        } catch (e: Exception) {
+            val intent = Intent()
+            intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+            startActivityForResult(intent, MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11)
+        }
+    }
+
+    private fun hasRwPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val isExternalStorageManager = Environment.isExternalStorageManager()
+            return isExternalStorageManager
+        }
+        val read = EasyPermissions.hasPermissions(
+            requireActivity(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        val write = EasyPermissions.hasPermissions(
+            requireActivity(),
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+
+        return read && write
     }
 }

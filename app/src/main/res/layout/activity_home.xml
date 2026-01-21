@@ -9,8 +9,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/llBottomSheet" />
+        app:layout_constraintBottom_toTopOf="@id/llBottomSheet"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <LinearLayout
@@ -34,7 +34,7 @@
             android:text="@string/text_bottom_nav_1"
             android:textAlignment="center"
             android:textColor="@color/color_80000000"
-            android:textSize="@dimen/_10sdp"
+            android:textSize="@dimen/_8sdp"
             app:drawableTopCompat="@drawable/ic_file" />
 
 
@@ -50,7 +50,7 @@
             android:text="@string/text_bottom_nav_2"
             android:textAlignment="center"
             android:textColor="@color/color_80000000"
-            android:textSize="@dimen/_10sdp"
+            android:textSize="@dimen/_8sdp"
             app:drawableTopCompat="@drawable/ic_recent" />
 
 
@@ -71,7 +71,7 @@
             android:text="@string/text_bottom_nav_3"
             android:textAlignment="center"
             android:textColor="@color/color_80000000"
-            android:textSize="@dimen/_10sdp"
+            android:textSize="@dimen/_8sdp"
             app:drawableTopCompat="@drawable/ic_favourites" />
 
 
@@ -87,7 +87,7 @@
             android:text="@string/text_bottom_nav_4"
             android:textAlignment="center"
             android:textColor="@color/color_80000000"
-            android:textSize="@dimen/_10sdp"
+            android:textSize="@dimen/_8sdp"
             app:drawableTopCompat="@drawable/ic_tools" />
 
     </LinearLayout>

@@ -1,5 +1,7 @@
 package com.cherry.doc.ui.allfile.adapter
 
+
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -98,20 +100,40 @@ class AllFileAdapter(
 
     fun getItem(position: Int): DocInfo = items[position]
 
-    // =====================================================
-    // UTIL
-    // =====================================================
+
     private fun formatDateTime(time: String?): Pair<String, String> {
-        return try {
-            val millis = time?.toLong() ?: return "" to ""
-            val date = Date(millis)
+        if (time.isNullOrBlank()) return "" to ""
 
-            val dateFmt = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-            val timeFmt = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val millis = parseDateToMillis(time) ?: return "" to ""
 
-            dateFmt.format(date) to timeFmt.format(date)
-        } catch (e: Exception) {
-            "" to ""
-        }
+        val date = Date(millis)
+        val dateFmt = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        val timeFmt = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        return dateFmt.format(date) to timeFmt.format(date)
     }
+
+    private fun parseDateToMillis(raw: String): Long? {
+        val formats = listOf(
+            "yyyy/MM/dd HH:mm",
+            "yyyy-MM-dd HH:mm",
+            "yyyy/MM/dd HH:mm:ss",
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd'T'HH:mm:ss",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS",
+        )
+
+        for (pattern in formats) {
+            try {
+                val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+                sdf.isLenient = false
+                val date = sdf.parse(raw)
+                if (date != null) return date.time
+            } catch (_: Exception) {
+            }
+        }
+        return null
+    }
+
+
 }

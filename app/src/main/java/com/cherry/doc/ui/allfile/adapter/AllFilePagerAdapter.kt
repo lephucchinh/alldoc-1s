@@ -5,6 +5,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.cherry.doc.ui.allfile.pager.AllFilePager
 import com.cherry.doc.ui.allfile.pager.ExcelTabPager
 import com.cherry.doc.ui.allfile.pager.PdfTabPager
+import com.cherry.doc.ui.allfile.pager.PptTabPager
 import com.cherry.doc.ui.allfile.pager.WordTabPager
 
 class AllFilePagerAdapter(
@@ -18,7 +19,7 @@ class AllFilePagerAdapter(
             1 -> PdfTabPager()
             2 -> WordTabPager()
             3 -> ExcelTabPager()
-            else -> PdfTabPager()
+            else -> PptTabPager()
         }
     }
 }

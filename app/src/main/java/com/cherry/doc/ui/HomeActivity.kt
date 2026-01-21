@@ -1,13 +1,26 @@
 package com.cherry.doc.ui
 
+import android.Manifest
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import com.cherry.doc.R
 import com.cherry.doc.databinding.ActivityHomeBinding
 import com.cherry.doc.ui.home.all.AllFileFragment
+import com.cherry.doc.ui.main.MainActivity
+import com.cherry.doc.util.DocUtil
 import com.cherry.doc.util.hideSystemBars
+import com.cherry.permissions.lib.EasyPermissions
+import com.cherry.permissions.lib.annotations.AfterPermissionGranted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class HomeActivity : AppCompatActivity() {

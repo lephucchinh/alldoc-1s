@@ -1,6 +1,13 @@
 package com.cherry.doc.ui.allfile.pager
 
+import android.Manifest
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +19,14 @@ import com.cherry.doc.data.DocInfo
 import com.cherry.doc.databinding.PageAllFileBinding
 import com.cherry.doc.ui.allfile.AllFileViewModel
 import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
+import com.cherry.doc.ui.main.MainActivity
+import com.cherry.doc.ui.main.MainActivity.Companion.TAG
+import com.cherry.doc.util.DocUtil
+import com.cherry.lib.doc.bean.DocSourceType
+import com.cherry.permissions.lib.EasyPermissions
+import com.cherry.permissions.lib.annotations.AfterPermissionGranted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class AllFilePager : Fragment() {
@@ -61,6 +76,22 @@ class AllFilePager : Fragment() {
         binding.rcvFiles.setHasFixedSize(true)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11) {
+            if (hasRwPermission()) {
+                requestStoragePermission()
+            }
+        }/* else if (requestCode == MainActivity.Companion.REQUEST_CODE_SELECT_DOCUMENT && resultCode == RESULT_OK) {
+            val documentUri = data?.data
+            Log.d(TAG, "documentUri = $documentUri")
+            documentUri?.let {
+                openDoc(it.toString(), DocSourceType.URI, null)
+            }
+
+        }*/
+    }
 
 
     private fun loadData() {
@@ -70,10 +101,22 @@ class AllFilePager : Fragment() {
             val allFiles = groups.flatMap { it.docList.orEmpty() }
             Log.d("AllFilePager", "files size = ${allFiles.size}")
 
-            adapter.submitList(allFiles)
+            adapter.submitList(allFiles.filter { isSupportedDoc(it) })
         }
+        requestStoragePermission()
 
-        viewModel.loadAllFiles()
+    }
+
+    fun isSupportedDoc(docInfo: DocInfo): Boolean {
+        val name = docInfo.fileName?.lowercase() ?: return false
+        return name.endsWith(".pdf")
+                || name.endsWith(".doc")
+                || name.endsWith(".docx")
+                || name.endsWith(".xls")
+                || name.endsWith(".xlsx")
+                || name.endsWith(".ppt")
+                || name.endsWith(".pptx")
+                || name.endsWith(".txt")
     }
 
 
@@ -82,23 +125,59 @@ class AllFilePager : Fragment() {
         _binding = null
     }
 
-    // =====================================================
-    // FAKE DATA – TEST
-    // =====================================================
-    private fun fakeDocs(): List<DocInfo> {
-        return listOf(
-            DocInfo().apply {
-                fileName = "PDF Scanner.pdf"
-                path = "/storage/pdf_scanner.pdf"
-                lastModified = System.currentTimeMillis().toString()
-                fileSize = "1.2 MB"
-            },
-            DocInfo().apply {
-                fileName = "Report.docx"
-                path = "/storage/report.docx"
-                lastModified = System.currentTimeMillis().toString()
-                fileSize = "850 KB"
+
+    @AfterPermissionGranted(MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION)
+    private fun requestStoragePermission() {
+        if (hasRwPermission()) {
+            // Have permission, do things!
+            CoroutineScope(Dispatchers.Main).launch {
+                viewModel.loadAllFiles()
             }
+
+        } else {
+            // Ask for one permission
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                get11Permission()
+                return
+            }
+            EasyPermissions.requestPermissions(
+                this,
+                "This app needs access to your storage to load local doc",
+                MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        }
+    }
+
+    fun get11Permission() {
+        try {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            intent.addCategory("android.intent.category.DEFAULT")
+            intent.data =
+                Uri.parse(java.lang.String.format("package:%s", requireActivity().packageName))
+            startActivityForResult(intent, MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11)
+        } catch (e: Exception) {
+            val intent = Intent()
+            intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+            startActivityForResult(intent, MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11)
+        }
+    }
+
+    private fun hasRwPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val isExternalStorageManager = Environment.isExternalStorageManager()
+            return isExternalStorageManager
+        }
+        val read = EasyPermissions.hasPermissions(
+            requireActivity(),
+            Manifest.permission.READ_EXTERNAL_STORAGE
         )
+        val write = EasyPermissions.hasPermissions(
+            requireActivity(),
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+
+        return read && write
     }
 }

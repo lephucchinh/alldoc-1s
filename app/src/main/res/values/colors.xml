@@ -6,6 +6,7 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="black_50">#80000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="white_70">#B3FFFFFF</color>
     <color name="color_1A000000">#1A000000</color>
@@ -18,4 +19,11 @@
     <color name="listItemColorExcel">#d7e4dc</color>
     <color name="listItemColorPPT">#f4e1d5</color>
     <color name="listItemColorImage">#D8F0F7</color>
+
+
+    <color name="red_all">#F8241C</color>
+    <color name="red_pdf">#F8241C</color>
+    <color name="blue_word">#2672E0</color>
+    <color name="green_excel">#18A263</color>
+    <color name="orange_ppt">#F27036</color>
 </resources>
