@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DocViewer</string>
+    <string name="app_name">Documents Reader &amp; PDF Editor</string>
     <string name="title_activity_main2">MainActivity2</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -43,4 +43,19 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+
+
+
+     <!--Create by Chinhlp : 21/1/2016-->
+    <string name="title_home_screen">All PDF Reader</string>
+    <string name="text_all">All</string>
+
+    <string name="text_bottom_nav_1">All Files</string>
+    <string name="text_bottom_nav_2">Recent</string>
+    <string name="text_bottom_nav_3">Favourites</string>
+    <string name="text_bottom_nav_4">Tools</string>
+
+    <string name="text_share">Share</string>
+    <string name="text_rename">Rename</string>
+
 </resources>

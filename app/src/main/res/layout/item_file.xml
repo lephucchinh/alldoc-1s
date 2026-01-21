@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_10sdp"
+    app:cardCornerRadius="@dimen/_6sdp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvFile"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_80sdp"
+            app:cardCornerRadius="@dimen/_15sdp"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/imgFile"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/pdf_ic" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/txtTools"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_tools"
+            android:fontFamily="@font/poppins_semibold"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/cvFile"
+            app:layout_constraintEnd_toEndOf="@+id/cvFile"
+            tools:text="PDF" />
+
+        <TextView
+            android:id="@+id/txtNameFile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:fontFamily="@font/poppins_medium"
+            android:maxWidth="@dimen/_160sdp"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintStart_toEndOf="@+id/cvFile"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="PDF Scanner.123" />
+
+        <TextView
+            android:id="@+id/txtDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/color_80000000"
+            android:textSize="@dimen/_10sdp"
+            app:layout_constraintStart_toStartOf="@+id/txtNameFile"
+            app:layout_constraintTop_toBottomOf="@+id/txtNameFile"
+            tools:text="22 March 2025" />
+
+        <TextView
+            android:id="@+id/txtTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/color_80000000"
+            android:textSize="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="@+id/txtDate"
+            app:layout_constraintStart_toEndOf="@+id/txtDate"
+            app:layout_constraintTop_toTopOf="@+id/txtDate"
+            tools:text="09:00 AM" />
+
+        <TextView
+            android:id="@+id/txtShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="@dimen/_10sdp"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:padding="@dimen/_9sdp"
+            android:text="@string/text_share"
+            android:textAlignment="center"
+            android:textColor="@color/color_B3000000"
+            android:textSize="@dimen/_10sdp"
+            app:drawableStartCompat="@drawable/ic_share"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/txtNameFile" />
+
+        <TextView
+            android:id="@+id/txtRename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:drawablePadding="@dimen/_10sdp"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:padding="@dimen/_9sdp"
+            android:text="@string/text_rename"
+            android:textAlignment="center"
+            android:textColor="@color/color_B3000000"
+            android:textSize="@dimen/_10sdp"
+            app:drawableStartCompat="@drawable/ic_rename"
+            app:layout_constraintBottom_toBottomOf="@+id/txtShare"
+            app:layout_constraintStart_toEndOf="@+id/txtShare"
+            app:layout_constraintTop_toTopOf="@+id/txtShare" />
+
+        <ImageView
+            android:id="@+id/imgOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/ic_option"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
