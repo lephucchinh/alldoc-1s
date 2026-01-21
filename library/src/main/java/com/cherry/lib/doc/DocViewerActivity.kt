@@ -4,16 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.cherry.lib.doc.bean.DocEngine
 import com.cherry.lib.doc.util.Constant
 import com.cherry.lib.doc.widget.DocView
 
-open class DocViewerActivity : AppCompatActivity() {
+open class DocViewerActivity : FragmentActivity() {
     private val TAG = "DocViewerActivity"
 
     companion object {
         fun launchDocViewer(
-            activity: AppCompatActivity, docSourceType: Int, path: String?,
+            activity: FragmentActivity, docSourceType: Int, path: String?,
             fileType: Int? = null, engine: Int? = null
         ) {
             var intent = Intent(activity, DocViewerActivity::class.java)

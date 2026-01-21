@@ -17,7 +17,7 @@ class AllFileAdapter(
 ) : RecyclerView.Adapter<AllFileAdapter.FileViewHolder>() {
 
     interface Listener {
-        fun onItemClick(item: DocInfo)
+        fun onItemClick(item: DocInfo, position: Int)
         fun onShare(item: DocInfo)
         fun onRename(item: DocInfo)
         fun onOption(item: DocInfo)
@@ -27,7 +27,7 @@ class AllFileAdapter(
         private val binding: ItemFileBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: DocInfo) = with(binding) {
+        fun bind(item: DocInfo, position: Int) = with(binding) {
 
             // ===== ICON FILE =====
             val iconRes = item.getTypeIcon()
@@ -51,7 +51,7 @@ class AllFileAdapter(
 
             // ===== CLICK EVENTS =====
             root.setOnClickListener {
-                listener?.onItemClick(item)
+                listener?.onItemClick(item, position)
             }
 
             txtShare.setOnClickListener {
@@ -78,7 +78,7 @@ class AllFileAdapter(
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], position)
     }
 
     override fun getItemCount(): Int = items.size

@@ -137,7 +137,7 @@ class AllFileFragment : Fragment() {
     private fun updateBgTitleByTab(position: Int) {
         val newColor = requireContext().getColor(
             when (position) {
-                0 -> android.R.color.white   // ALL = trắng
+                0 -> android.R.color.white
                 1 -> R.color.red_pdf
                 2 -> R.color.blue_word
                 3 -> R.color.green_excel

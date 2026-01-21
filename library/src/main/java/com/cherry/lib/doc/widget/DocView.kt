@@ -18,8 +18,8 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -68,7 +68,7 @@ class DocView : FrameLayout,OnDownloadListener, OnWebLoadListener,OnPdfItemClick
     private val TAG = "DocView"
 
     var mActivity: Activity? = null
-    var lifecycleScope: LifecycleCoroutineScope = (context as AppCompatActivity).lifecycleScope
+    var lifecycleScope: LifecycleCoroutineScope = (context as FragmentActivity).lifecycleScope
     private var mPoiViewer:PoiViewer? = null
     private var pdfRendererCore: PdfRendererCore? = null
     private var pdfViewAdapter: PdfViewAdapter? = null
@@ -386,7 +386,7 @@ class DocView : FrameLayout,OnDownloadListener, OnWebLoadListener,OnPdfItemClick
         url: String,
         pdfQuality: PdfQuality = this.quality,
         engine: DocEngine = this.engine,
-        lifecycleScope: LifecycleCoroutineScope = (context as AppCompatActivity).lifecycleScope
+        lifecycleScope: LifecycleCoroutineScope = (context as FragmentActivity).lifecycleScope
     ) {
         this.lifecycleScope = lifecycleScope
         downloadFile(url, pdfQuality, lifecycleScope)
@@ -421,7 +421,7 @@ class DocView : FrameLayout,OnDownloadListener, OnWebLoadListener,OnPdfItemClick
     }
 
     fun downloadFile(url: String, pdfQuality: PdfQuality = this.quality,
-                     lifecycleScope: LifecycleCoroutineScope = (context as AppCompatActivity).lifecycleScope) {
+                     lifecycleScope: LifecycleCoroutineScope = (context as FragmentActivity).lifecycleScope) {
         PdfDownloader(url, this)
     }
 

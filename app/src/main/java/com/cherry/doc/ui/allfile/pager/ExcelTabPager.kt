@@ -19,6 +19,10 @@ import com.cherry.doc.databinding.PageAllFileBinding
 import com.cherry.doc.ui.allfile.AllFileViewModel
 import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
 import com.cherry.doc.ui.main.MainActivity
+import com.cherry.lib.doc.DocViewerActivity
+import com.cherry.lib.doc.bean.DocSourceType
+import com.cherry.lib.doc.bean.FileType
+import com.cherry.lib.doc.util.FileUtils
 import com.cherry.permissions.lib.EasyPermissions
 import com.cherry.permissions.lib.annotations.AfterPermissionGranted
 import kotlinx.coroutines.CoroutineScope
@@ -51,10 +55,22 @@ class ExcelTabPager : Fragment() {
         loadData()
     }
 
+    fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
+        DocViewerActivity.Companion.launchDocViewer(
+            requireActivity(),
+            docSourceType,
+            path,
+            type
+        )
+    }
+
     private fun setupRecyclerView() {
         adapter = AllFileAdapter(listener = object : AllFileAdapter.Listener {
-            override fun onItemClick(item: DocInfo) {
-                // TODO: open file
+            override fun onItemClick(item: DocInfo, position: Int) {
+                var path = item.path ?: ""
+                if (checkSupport(path)) {
+                    openDoc(path, DocSourceType.PATH)
+                }
             }
 
             override fun onShare(item: DocInfo) {
@@ -110,6 +126,15 @@ class ExcelTabPager : Fragment() {
         return name.endsWith(".xls")
                 || name.endsWith(".xlsx")
 
+    }
+
+    fun checkSupport(path: String): Boolean {
+        var fileType = FileUtils.getFileTypeForUrl(path)
+        Log.e(javaClass.simpleName, "fileType = $fileType")
+        if (fileType == FileType.NOT_SUPPORT) {
+            return false
+        }
+        return true
     }
 
 
