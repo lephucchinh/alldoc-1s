@@ -97,12 +97,15 @@
         android:layout_width="@dimen/_50sdp"
         android:layout_height="@dimen/_50sdp"
         android:background="@drawable/bg_radiur_red"
+        android:backgroundTint="#18A362"
         android:padding="@dimen/_10sdp"
         android:src="@drawable/ic_scanner"
+        android:elevation="@dimen/_10sdp"
         app:layout_constraintBottom_toTopOf="@+id/llBottomSheet"
         app:layout_constraintEnd_toEndOf="@+id/llBottomSheet"
         app:layout_constraintStart_toStartOf="@+id/llBottomSheet"
-        app:layout_constraintTop_toTopOf="@+id/llBottomSheet" />
+        app:layout_constraintTop_toTopOf="@+id/llBottomSheet"
+        app:tint="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

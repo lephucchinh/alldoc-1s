@@ -1,6 +1,7 @@
 package com.cherry.doc.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -8,19 +9,28 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import com.cherry.doc.R
 import com.cherry.doc.databinding.ActivityHomeBinding
 import com.cherry.doc.ui.home.all.AllFileFragment
 import com.cherry.doc.ui.main.MainActivity
+import com.cherry.doc.ui.widgets.OpenSdkScanner.registerDocumentScanner
+import com.cherry.doc.ui.widgets.OpenSdkScanner.startScanDocument
 import com.cherry.doc.util.DocUtil
 import com.cherry.doc.util.hideSystemBars
 import com.cherry.permissions.lib.EasyPermissions
 import com.cherry.permissions.lib.annotations.AfterPermissionGranted
+import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
+import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 
 
 class HomeActivity : AppCompatActivity() {
@@ -35,6 +45,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private lateinit var currentTag: String
+    private lateinit var scannerLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -47,6 +58,7 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         hideSystemBars()
+
         initFragments()
 
         currentTag = savedInstanceState?.getString("CURRENT_TAG") ?: TAG_ALL
@@ -96,7 +108,17 @@ class HomeActivity : AppCompatActivity() {
     // BOTTOM NAV CLICK
     // =====================================================
     private fun initListener() = with(binding) {
-
+        scannerLauncher = registerDocumentScanner(
+            activity = this@HomeActivity,
+            onImagesResult = { images ->
+                // TODO: show preview RecyclerView / ImageView
+            },
+            onPdfResult = { pdf ->
+                pdf?.let {
+                    // TODO: save / open / share pdf
+                }
+            }
+        )
         btnAllFile.setOnClickListener {
             showFragment(TAG_ALL)
             updateBottomUI(HomeScreen.ALL)
@@ -118,7 +140,10 @@ class HomeActivity : AppCompatActivity() {
         }
 
         btnScanner.setOnClickListener {
-            // TODO: open scanner / camera
+            startScanDocument(
+                activity = this@HomeActivity,
+                launcher = scannerLauncher
+            )
         }
     }
 
