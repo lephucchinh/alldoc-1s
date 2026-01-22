@@ -85,7 +85,8 @@ class Dialog1EditTextFragment : DialogFragment() {
         const val KEY_DEFAULT_TEXT = "key_default_text"
         const val KEY_POSITIVE_TEXT = "key_positive_text"
         const val KEY_NEGATIVE_TEXT = "key_negative_text"
-
+        const val KEY_RESULT_KEY = "key_result_key"
+        const val RESULT_TEXT = "result_text"
         // ===== RESULT KEYS =====
         const val RESULT_KEY_ALL_APP = "DialogAllFileRename"
         const val RESULT_KEY_EXCEL = "DialogExcelRename"
@@ -93,10 +94,7 @@ class Dialog1EditTextFragment : DialogFragment() {
         const val RESULT_KEY_PPT = "DialogPptRename"
         const val RESULT_KEY_WORD = "DialogWordRename"
 
-        const val KEY_RESULT_KEY = "key_result_key"
 
-
-        const val RESULT_TEXT = "result_text"
 
         fun newInstance(
             title: String,

@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_10sdp"
     app:cardCornerRadius="@dimen/_6sdp"
+    app:cardBackgroundColor="@color/white"
     app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,6 +19,7 @@
             android:layout_height="@dimen/_70sdp"
             app:cardCornerRadius="@dimen/_6sdp"
             app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -38,8 +40,8 @@
             android:fontFamily="@font/poppins_semibold"
             android:includeFontPadding="false"
             android:paddingHorizontal="@dimen/_5sdp"
-            android:textSize="@dimen/_10sdp"
             android:textColor="@color/white"
+            android:textSize="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="@+id/cvFile"
             app:layout_constraintEnd_toEndOf="@+id/cvFile"
             tools:text="PDF" />
@@ -123,7 +125,7 @@
             android:id="@+id/imgOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_10sdp"
+            android:padding="@dimen/_10sdp"
             android:src="@drawable/ic_option"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -25,6 +25,7 @@ import com.cherry.doc.ui.main.MainActivity
 import com.cherry.doc.ui.main.MainActivity.Companion.TAG
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_ALL_APP
+import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
 import com.cherry.doc.util.DocUtil
 import com.cherry.doc.util.shareFile
 import com.cherry.lib.doc.DocViewerActivity
@@ -83,7 +84,7 @@ class AllFilePager : Fragment() {
             }
 
             override fun onOption(item: DocInfo) {
-                // TODO: show bottom sheet / popup
+                showBottomSheetOption(item)
             }
         })
 
@@ -109,6 +110,38 @@ class AllFilePager : Fragment() {
             negativeText = getString(R.string.text_cancel),
             resultKey = RESULT_KEY_ALL_APP
         ).show(parentFragmentManager, RESULT_KEY_ALL_APP)
+    }
+
+    private fun showBottomSheetOption(item: DocInfo) {
+        OptionPdfBottomSheet(
+            docInfo = item,
+            listener = object : OptionPdfBottomSheet.Listener {
+
+                override fun onAddFavourite(doc: DocInfo) {
+                    // TODO: save favourite
+                }
+
+                override fun onMergePdf(doc: DocInfo) {
+                    // TODO: open merge screen
+                }
+
+                override fun onSplitPdf(doc: DocInfo) {
+                    // TODO: open split screen
+                }
+
+                override fun onLockPdf(doc: DocInfo) {
+                    // TODO: lock pdf
+                }
+
+                override fun onDelete(doc: DocInfo) {
+                    // TODO: delete file + update ViewModel
+                }
+
+                override fun onShare(doc: DocInfo) {
+                    doc.path?.let { requireContext().shareFile(it) }
+                }
+            }
+        ).show(parentFragmentManager, "OptionPdfBottomSheet")
     }
 
     private fun initListener() {

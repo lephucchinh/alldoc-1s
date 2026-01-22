@@ -62,4 +62,11 @@
     <string name="text_save">Save</string>
     <string name="text_cancel">cancel</string>
 
+
+    <string name="text_add_favourite">Add to Favourite</string>
+    <string name="text_merge_pdf">Merge PDF</string>
+    <string name="text_splish_pdf">Split PDF</string>
+    <string name="text_lock_pdf">Lock PDF</string>
+    <string name="text_delete">Delete</string>
+
 </resources>

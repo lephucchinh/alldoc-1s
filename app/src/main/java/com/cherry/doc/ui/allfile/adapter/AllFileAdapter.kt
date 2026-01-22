@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.databinding.ItemFileBinding
+import com.cherry.doc.util.formatDateTime
 import com.cherry.lib.doc.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,9 +44,10 @@ class AllFileAdapter(
             txtNameFile.text = item.fileName.orEmpty()
 
             // ===== DATE / TIME =====
-            val (date, time) = formatDateTime(item.lastModified)
+            val (date, time) = item.lastModified.formatDateTime()
             txtDate.text = date
             txtTime.text = time
+
 
             // ===== CLICK EVENTS =====
             root.setOnClickListener {

@@ -10,6 +10,9 @@ import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.core.content.FileProvider
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 fun Activity.hideSystemBars() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -104,4 +107,37 @@ fun Context.shareFiles(
     } catch (e: Exception) {
         e.printStackTrace()
     }
+}
+
+fun String.toMillisFromAnyFormat(): Long? {
+    val formats = listOf(
+        "yyyy/MM/dd HH:mm",
+        "yyyy-MM-dd HH:mm",
+        "yyyy/MM/dd HH:mm:ss",
+        "yyyy-MM-dd HH:mm:ss",
+        "yyyy-MM-dd'T'HH:mm:ss",
+        "yyyy-MM-dd'T'HH:mm:ss.SSS"
+    )
+
+    for (pattern in formats) {
+        try {
+            val sdf = SimpleDateFormat(pattern, Locale.getDefault()).apply {
+                isLenient = false
+            }
+            return sdf.parse(this)?.time
+        } catch (_: Exception) {
+        }
+    }
+    return null
+}
+fun String?.formatDateTime(): Pair<String, String> {
+    if (this.isNullOrBlank()) return "" to ""
+
+    val millis = this.toMillisFromAnyFormat() ?: return "" to ""
+    val date = Date(millis)
+
+    val dateFmt = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val timeFmt = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+    return dateFmt.format(date) to timeFmt.format(date)
 }

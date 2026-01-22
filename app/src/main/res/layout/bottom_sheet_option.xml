@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:padding="@dimen/_20sdp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvFile"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_44sdp"
+        app:cardCornerRadius="@dimen/_6sdp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imgFile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/pdf_ic" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/txtTools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_tools"
+        android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="@dimen/_3sdp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_6sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/cvFile"
+        app:layout_constraintEnd_toEndOf="@+id/cvFile"
+        tools:text="PDF" />
+
+    <TextView
+        android:id="@+id/txtNameFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:maxWidth="@dimen/_160sdp"
+        android:maxLines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:layout_constraintStart_toEndOf="@+id/cvFile"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="PDF Scanner.123" />
+
+    <TextView
+        android:id="@+id/txtDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="@color/color_80000000"
+        android:textSize="@dimen/_8sdp"
+        app:layout_constraintStart_toStartOf="@+id/txtNameFile"
+        app:layout_constraintTop_toBottomOf="@+id/txtNameFile"
+        tools:text="22 March 2025" />
+
+    <TextView
+        android:id="@+id/txtTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="@color/color_80000000"
+        android:textSize="@dimen/_8sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/txtDate"
+        app:layout_constraintStart_toEndOf="@+id/txtDate"
+        app:layout_constraintTop_toTopOf="@+id/txtDate"
+        tools:text="09:00 AM" />
+
+    <TextView
+        android:id="@+id/btnAddFavourite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_16sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:padding="@dimen/_3sdp"
+        android:text="@string/text_add_favourite"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:drawableStartCompat="@drawable/ic_favourites"
+        app:layout_constraintTop_toBottomOf="@+id/cvFile" />
+
+    <TextView
+        android:id="@+id/btnMergePdf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_16sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:padding="@dimen/_3sdp"
+        android:text="@string/text_merge_pdf"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:drawableStartCompat="@drawable/ic_merge"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddFavourite" />
+
+    <TextView
+        android:id="@+id/btnSplitPdf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_16sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:padding="@dimen/_3sdp"
+        android:text="@string/text_splish_pdf"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:drawableStartCompat="@drawable/ic_split"
+        app:layout_constraintTop_toBottomOf="@+id/btnMergePdf" />
+
+    <TextView
+        android:id="@+id/btnLockPdf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_16sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:padding="@dimen/_3sdp"
+        android:text="@string/text_lock_pdf"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:drawableStartCompat="@drawable/ic_lock"
+        app:layout_constraintTop_toBottomOf="@+id/btnSplitPdf" />
+
+    <TextView
+        android:id="@+id/btnDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_16sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:padding="@dimen/_3sdp"
+        android:text="@string/text_delete"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:drawableStartCompat="@drawable/ic_delete"
+        app:layout_constraintTop_toBottomOf="@+id/btnLockPdf" />
+
+    <TextView
+        android:id="@+id/btnShare"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:drawablePadding="@dimen/_16sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
+        android:padding="@dimen/_3sdp"
+        android:text="@string/text_share"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
+        app:drawableStartCompat="@drawable/ic_share_option"
+        app:layout_constraintTop_toBottomOf="@+id/btnDelete" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
