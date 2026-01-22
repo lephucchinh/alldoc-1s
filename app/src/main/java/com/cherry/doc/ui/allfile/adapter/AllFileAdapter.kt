@@ -33,7 +33,7 @@ class AllFileAdapter(
             val iconRes = item.getTypeIcon()
             if (iconRes != -1) {
                 imgFile.setImageResource(iconRes)
-                txtTools.text = item.getFileType()
+                txtTools.text = item.getNormalizedFileType()
             } else {
                 imgFile.setImageResource(
                     R.drawable.all_doc_ic

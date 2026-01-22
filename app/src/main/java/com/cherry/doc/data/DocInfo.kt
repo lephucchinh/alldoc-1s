@@ -29,19 +29,19 @@ class DocInfo {
             return com.cherry.lib.doc.R.drawable.file_doc
         }
         if (fileName?.lowercase()?.endsWith("docx") == true) {
-            return com.cherry.lib.doc.R.drawable.file_docx
+            return com.cherry.lib.doc.R.drawable.file_doc
         }
         if (fileName?.lowercase()?.endsWith("xls") == true) {
             return com.cherry.lib.doc.R.drawable.file_xls
         }
         if (fileName?.lowercase()?.endsWith("xlsx") == true) {
-            return com.cherry.lib.doc.R.drawable.file_xlsx
+            return com.cherry.lib.doc.R.drawable.file_xls
         }
         if (fileName?.lowercase()?.endsWith("ppt") == true) {
             return com.cherry.lib.doc.R.drawable.ppt_ic
         }
         if (fileName?.lowercase()?.endsWith("pptx") == true) {
-            return com.cherry.lib.doc.R.drawable.file_pptx
+            return com.cherry.lib.doc.R.drawable.ppt_ic
         }
         if (fileName?.lowercase()?.endsWith("txt") == true) {
             return com.cherry.lib.doc.R.drawable.file_txt
@@ -58,6 +58,24 @@ class DocInfo {
         }
 
     }
+
+    fun getNormalizedFileType(): String? {
+        val ext = try {
+            path?.substringAfterLast('.', "")?.lowercase()
+        } catch (e: Exception) {
+            null
+        }
+
+        return when (ext) {
+            "doc", "docx" -> "DOC"
+            "xls", "xlsx" -> "XLS"
+            "ppt", "pptx" -> "PPT"
+            "pdf" -> "PDF"
+            "txt" -> "TXT"
+            else -> mimeType?.uppercase()
+        }
+    }
+
 
 
 }
