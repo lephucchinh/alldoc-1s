@@ -16,13 +16,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.databinding.PageAllFileBinding
 import com.cherry.doc.ui.allfile.AllFileViewModel
 import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
 import com.cherry.doc.ui.main.MainActivity
 import com.cherry.doc.ui.main.MainActivity.Companion.TAG
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_ALL_APP
 import com.cherry.doc.util.DocUtil
+import com.cherry.doc.util.shareFile
 import com.cherry.lib.doc.DocViewerActivity
 import com.cherry.lib.doc.bean.DocSourceType
 import com.cherry.lib.doc.bean.FileType
@@ -41,6 +45,9 @@ class AllFilePager : Fragment() {
 
     private lateinit var adapter: AllFileAdapter
 
+    private var pendingRenameItem: DocInfo? = null
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,7 +59,7 @@ class AllFilePager : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initListener()
         setupRecyclerView()
         loadData()
     }
@@ -67,11 +74,12 @@ class AllFilePager : Fragment() {
             }
 
             override fun onShare(item: DocInfo) {
-                // TODO: share file
+                item.path?.let { requireContext().shareFile(it) }
             }
 
-            override fun onRename(item: DocInfo) {
-                // TODO: rename file
+            override fun onRename(item: DocInfo, position: Int) {
+                pendingRenameItem = item
+                showDialogRename(item.fileName?.substringBeforeLast(".") ?: "")
             }
 
             override fun onOption(item: DocInfo) {
@@ -90,15 +98,34 @@ class AllFilePager : Fragment() {
             if (hasRwPermission()) {
                 requestStoragePermission()
             }
-        }/* else if (requestCode == MainActivity.Companion.REQUEST_CODE_SELECT_DOCUMENT && resultCode == RESULT_OK) {
-            val documentUri = data?.data
-            Log.d(TAG, "documentUri = $documentUri")
-            documentUri?.let {
-                openDoc(it.toString(), DocSourceType.URI, null)
-            }
-
-        }*/
+        }
     }
+
+    private fun showDialogRename(nameFile: String) {
+        Dialog1EditTextFragment.newInstance(
+            title = getString(R.string.text_rename),
+            defaultText = nameFile,
+            positiveText = getString(R.string.text_save),
+            negativeText = getString(R.string.text_cancel),
+            resultKey = RESULT_KEY_ALL_APP
+        ).show(parentFragmentManager, RESULT_KEY_ALL_APP)
+    }
+
+    private fun initListener() {
+        parentFragmentManager.setFragmentResultListener(
+            Dialog1EditTextFragment.RESULT_KEY_ALL_APP,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val newName =
+                bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
+                    ?: return@setFragmentResultListener
+
+            pendingRenameItem?.let { viewModel.renameDoc(it, newName) }
+            pendingRenameItem = null
+
+        }
+    }
+
 
     fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
         DocViewerActivity.Companion.launchDocViewer(
@@ -121,12 +148,10 @@ class AllFilePager : Fragment() {
 
     private fun loadData() {
         viewModel.allFiles.observe(viewLifecycleOwner) { groups ->
-            Log.d("AllFilePager", "groups size = ${groups.size}")
 
-            val allFiles = groups.flatMap { it.docList.orEmpty() }
-            Log.d("AllFilePager", "files size = ${allFiles.size}")
+            val allFiles = groups?.flatMap { it.docList.orEmpty() }
 
-            adapter.submitList(allFiles.filter { isSupportedDoc(it) })
+            adapter.submitList(allFiles?.filter { isSupportedDoc(it) })
         }
         requestStoragePermission()
 

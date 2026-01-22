@@ -19,6 +19,10 @@ import com.cherry.doc.databinding.PageAllFileBinding
 import com.cherry.doc.ui.allfile.AllFileViewModel
 import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
 import com.cherry.doc.ui.main.MainActivity
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_ALL_APP
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_EXCEL
+import com.cherry.doc.util.shareFile
 import com.cherry.lib.doc.DocViewerActivity
 import com.cherry.lib.doc.bean.DocSourceType
 import com.cherry.lib.doc.bean.FileType
@@ -38,6 +42,7 @@ class ExcelTabPager : Fragment() {
     private val viewModel: AllFileViewModel by activityViewModels()
 
     private lateinit var adapter: AllFileAdapter
+    private var pendingRenameItem: DocInfo? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +55,7 @@ class ExcelTabPager : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initListener()
         setupRecyclerView()
         loadData()
     }
@@ -74,11 +79,12 @@ class ExcelTabPager : Fragment() {
             }
 
             override fun onShare(item: DocInfo) {
-                // TODO: share file
+                item.path?.let { requireContext().shareFile(it) }
             }
 
-            override fun onRename(item: DocInfo) {
-                // TODO: rename file
+            override fun onRename(item: DocInfo, position: Int) {
+                pendingRenameItem = item
+                item.fileName?.let { showDialogRename(it) }
             }
 
             override fun onOption(item: DocInfo) {
@@ -107,15 +113,39 @@ class ExcelTabPager : Fragment() {
         }*/
     }
 
+    private fun showDialogRename(nameFile: String) {
+        Dialog1EditTextFragment.newInstance(
+            title = getString(R.string.text_rename),
+            defaultText = nameFile,
+            positiveText = getString(R.string.text_save),
+            negativeText = getString(R.string.text_cancel),
+            resultKey = RESULT_KEY_EXCEL
+        ).show(parentFragmentManager, RESULT_KEY_EXCEL)
+    }
+
+
+    private fun initListener() {
+        parentFragmentManager.setFragmentResultListener(
+            Dialog1EditTextFragment.RESULT_KEY_EXCEL,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val newName =
+                bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
+                    ?: return@setFragmentResultListener
+
+
+            pendingRenameItem?.let { viewModel.renameDoc(it, newName) }
+            pendingRenameItem = null
+        }
+    }
+
 
     private fun loadData() {
         viewModel.allFiles.observe(viewLifecycleOwner) { groups ->
-            Log.d("AllFilePager", "groups size = ${groups.size}")
 
-            val allFiles = groups.flatMap { it.docList.orEmpty() }
-            Log.d("AllFilePager", "files size = ${allFiles.size}")
+            val allFiles = groups?.flatMap { it.docList.orEmpty() }
 
-            adapter.submitList(allFiles.filter { isSupportedDoc(it) })
+            adapter.submitList(allFiles?.filter { isSupportedDoc(it) })
         }
         requestStoragePermission()
 

@@ -58,4 +58,8 @@
     <string name="text_share">Share</string>
     <string name="text_rename">Rename</string>
 
+
+    <string name="text_save">Save</string>
+    <string name="text_cancel">cancel</string>
+
 </resources>

@@ -4,6 +4,7 @@ package com.cherry.doc.ui.allfile.adapter
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.databinding.ItemFileBinding
@@ -12,19 +13,18 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class AllFileAdapter(
-    private val items: MutableList<DocInfo> = mutableListOf(),
-    private val listener: Listener? = null
-) : RecyclerView.Adapter<AllFileAdapter.FileViewHolder>() {
+    private val listener: Listener? = null,
+) : ListAdapter<DocInfo, AllFileAdapter.FileViewHolder>(DocDiffCallback) {
 
     interface Listener {
         fun onItemClick(item: DocInfo, position: Int)
         fun onShare(item: DocInfo)
-        fun onRename(item: DocInfo)
+        fun onRename(item: DocInfo, position: Int)
         fun onOption(item: DocInfo)
     }
 
     inner class FileViewHolder(
-        private val binding: ItemFileBinding
+        private val binding: ItemFileBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: DocInfo, position: Int) = with(binding) {
@@ -35,9 +35,7 @@ class AllFileAdapter(
                 imgFile.setImageResource(iconRes)
                 txtTools.text = item.getNormalizedFileType()
             } else {
-                imgFile.setImageResource(
-                    R.drawable.all_doc_ic
-                )
+                imgFile.setImageResource(R.drawable.all_doc_ic)
                 txtTools.text = ""
             }
 
@@ -54,59 +52,33 @@ class AllFileAdapter(
                 listener?.onItemClick(item, position)
             }
 
-            txtShare.setOnClickListener {
-                listener?.onShare(item)
-            }
-
-            txtRename.setOnClickListener {
-                listener?.onRename(item)
-            }
-
-            imgOption.setOnClickListener {
-                listener?.onOption(item)
-            }
+            txtShare.setOnClickListener { listener?.onShare(item) }
+            txtRename.setOnClickListener { listener?.onRename(item, position) }
+            imgOption.setOnClickListener { listener?.onOption(item) }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileViewHolder {
-        val binding = ItemFileBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+        return FileViewHolder(
+            ItemFileBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
-        return FileViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
-        holder.bind(items[position], position)
+        holder.bind(getItem(position), position)
     }
 
-    override fun getItemCount(): Int = items.size
-
-    // =====================================================
-    // PUBLIC API
-    // =====================================================
-
-    fun submitList(newList: List<DocInfo>) {
-        items.clear()
-        items.addAll(newList)
-        notifyDataSetChanged()
-    }
-
-    fun addItem(item: DocInfo) {
-        items.add(0, item)
-        notifyItemInserted(0)
-    }
-
-    fun getItem(position: Int): DocInfo = items[position]
-
-
+    // ===== Utils =====
     private fun formatDateTime(time: String?): Pair<String, String> {
         if (time.isNullOrBlank()) return "" to ""
 
         val millis = parseDateToMillis(time) ?: return "" to ""
-
         val date = Date(millis)
+
         val dateFmt = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
         val timeFmt = SimpleDateFormat("HH:mm", Locale.getDefault())
 
@@ -134,6 +106,5 @@ class AllFileAdapter(
         }
         return null
     }
-
-
 }
+

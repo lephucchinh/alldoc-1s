@@ -70,10 +70,12 @@ object DocUtil {
                 + " OR " + MediaStore.Files.FileColumns.MIME_TYPE + "=?"
                 + " OR " + MediaStore.Files.FileColumns.MIME_TYPE + "=?")
         //args
-        val selectionArgs = arrayOf(pdf, doc, docx, xls, xlsx, ppt, pptx, txt,png,jpg,jpeg)
-        val fileCursor = context.contentResolver.query(table, column, selection, selectionArgs, null)
+        val selectionArgs = arrayOf(pdf, doc, docx, xls, xlsx, ppt, pptx, txt, png, jpg, jpeg)
+        val fileCursor =
+            context.contentResolver.query(table, column, selection, selectionArgs, null)
 
-        val displayNameKey = fileCursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
+        val displayNameKey =
+            fileCursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
         val dataKey = fileCursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
         val sizeKey = fileCursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
         val typeKey = fileCursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
@@ -95,11 +97,11 @@ object DocUtil {
             val album = fileCursor.getString(albumKey)
             val lastModified = fileCursor.getLong(lastModifiedKey)
             val fileSize = fileCursor.getLong(sizeKey)
-            Log.v(TAG,"fileName = $fileName")
-            Log.v(TAG,"path = $path")
-            Log.v(TAG,"mimeType = $mimeType")
-            Log.v(TAG,"fileSize = ${getFormatSize(fileSize.toDouble())}")
-            Log.v(TAG,"lastModified = ${stampToDate(lastModified * 1000)}")
+            Log.v(TAG, "fileName = $fileName")
+            Log.v(TAG, "path = $path")
+            Log.v(TAG, "mimeType = $mimeType")
+            Log.v(TAG, "fileSize = ${getFormatSize(fileSize.toDouble())}")
+            Log.v(TAG, "lastModified = ${stampToDate(lastModified * 1000)}")
 
             var item = DocInfo()
             item.album = album
@@ -110,6 +112,9 @@ object DocUtil {
             item.fileSize = getFormatSize(fileSize.toDouble())
 
             var fileType = FileUtils.getFileTypeForUrl(path)
+            if (fileType == FileType.PDF) {
+                pdfList.add(item)
+            }
             if (fileType == FileType.DOC || fileType == FileType.DOCX) {
                 docList.add(item)
             }
@@ -118,9 +123,6 @@ object DocUtil {
             }
             if (fileType == FileType.PPT || fileType == FileType.PPTX) {
                 pptList.add(item)
-            }
-            if (fileType == FileType.PDF) {
-                pdfList.add(item)
             }
             if (fileType == FileType.TXT) {
                 txtList.add(item)
@@ -131,13 +133,12 @@ object DocUtil {
 
         }
 
-
-        docGroupList.add(DocGroupInfo("DOC & DOCX",docList))
-        docGroupList.add(DocGroupInfo("XLS & XLSX",excelList))
-        docGroupList.add(DocGroupInfo("PPT & PPTX",pptList))
-        docGroupList.add(DocGroupInfo("PDF",pdfList))
-        docGroupList.add(DocGroupInfo("TXT",txtList))
-        docGroupList.add(DocGroupInfo("IMAGE",imageList))
+        docGroupList.add(DocGroupInfo("PDF", pdfList))
+        docGroupList.add(DocGroupInfo("DOC & DOCX", docList))
+        docGroupList.add(DocGroupInfo("XLS & XLSX", excelList))
+        docGroupList.add(DocGroupInfo("PPT & PPTX", pptList))
+        docGroupList.add(DocGroupInfo("TXT", txtList))
+        docGroupList.add(DocGroupInfo("IMAGE", imageList))
 
         return docGroupList
     }
