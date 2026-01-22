@@ -23,6 +23,7 @@ import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PPT
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_WORD
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
+import com.cherry.doc.util.FileManager.deleteFileSmart
 import com.cherry.doc.util.shareFile
 import com.cherry.lib.doc.DocViewerActivity
 import com.cherry.lib.doc.bean.DocSourceType
@@ -152,7 +153,7 @@ class WordTabPager : Fragment() {
                 }
 
                 override fun onDelete(doc: DocInfo) {
-                    // TODO: delete file + update ViewModel
+                    doc.path?.let { deleteFileSmart(requireContext(),it) }
                 }
 
                 override fun onShare(doc: DocInfo) {
