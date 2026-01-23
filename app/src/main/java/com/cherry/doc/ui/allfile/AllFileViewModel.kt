@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.cherry.doc.data.DocGroupInfo
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.util.DocUtil
+import com.cherry.doc.util.FileManager.deleteFileSmart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -39,6 +40,29 @@ class AllFileViewModel(application: Application) : AndroidViewModel(application)
         _allFiles.postValue(newGroups)
         return renamed
     }
+
+    fun deleteDoc(item: DocInfo): Boolean {
+       val deleted =  item.path?.let { deleteFileSmart(getApplication() , it) } ?: return false
+        if (deleted.not()) return false
+
+        val updatedGroups = _allFiles.value
+            ?.mapNotNull { group ->
+                val newList = group.docList
+                    ?.filter { it.path != item.path }
+                    ?.toCollection(ArrayList())
+
+                // nếu group còn item → giữ
+                if (!newList.isNullOrEmpty()) {
+                    group.copy(docList = newList)
+                } else {
+                    null // group rỗng → xoá luôn
+                }
+            }
+
+        _allFiles.postValue(updatedGroups)
+        return true
+    }
+
 
 
 }

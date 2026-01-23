@@ -9,6 +9,10 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.core.content.FileProvider
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.pdmodel.encryption.AccessPermission
+import com.tom_roush.pdfbox.pdmodel.encryption.StandardProtectionPolicy
+
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -106,6 +110,39 @@ fun Context.shareFiles(
         startActivity(Intent.createChooser(intent, title))
     } catch (e: Exception) {
         e.printStackTrace()
+    }
+}
+
+fun File.lockPdf(
+    outputFile: File = this,
+    password: String
+): Boolean {
+    if (!exists() || extension.lowercase() != "pdf") return false
+
+    return try {
+        val document = PDDocument.load(this)
+
+        val accessPermission = AccessPermission().apply {
+            setCanPrint(true)
+            setCanModify(false)
+        }
+
+        val policy = StandardProtectionPolicy(
+            password, // owner password
+            password, // user password
+            accessPermission
+        ).apply {
+            encryptionKeyLength = 128
+            permissions = accessPermission
+        }
+
+        document.protect(policy)
+        document.save(outputFile)
+        document.close()
+        true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
     }
 }
 

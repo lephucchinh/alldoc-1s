@@ -93,6 +93,11 @@ class Dialog1EditTextFragment : DialogFragment() {
         const val RESULT_KEY_PDF = "DialogPdfRename"
         const val RESULT_KEY_PPT = "DialogPptRename"
         const val RESULT_KEY_WORD = "DialogWordRename"
+        const val RESULT_KEY_PASSWORD_ALL_FILE = "RESULT_KEY_PASSWORD_ALL_FILE"
+        const val RESULT_KEY_PASSWORD_EXCEL = "RESULT_KEY_PASSWORD_EXCEL"
+        const val RESULT_KEY_PASSWORD_PDF = "RESULT_KEY_PASSWORD_PDF"
+        const val RESULT_KEY_PASSWORD_PPT = "RESULT_KEY_PASSWORD_PPT"
+        const val RESULT_KEY_PASSWORD_WORD = "RESULT_KEY_PASSWORD_WORD"
 
 
 

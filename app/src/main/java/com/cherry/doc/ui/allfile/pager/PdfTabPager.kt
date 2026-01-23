@@ -11,8 +11,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.databinding.PageAllFileBinding
@@ -21,9 +23,15 @@ import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
 import com.cherry.doc.ui.main.MainActivity
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_EXCEL
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_PDF
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PDF
+import com.cherry.doc.ui.widgets.DialogFragmentDelete
+import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
 import com.cherry.doc.util.FileManager.deleteFileSmart
+import com.cherry.doc.util.FileManager.isPdfEncrypted
+import com.cherry.doc.util.FileManager.unlockPdfToCache
+import com.cherry.doc.util.formatDateTime
 import com.cherry.doc.util.shareFile
 import com.cherry.lib.doc.DocViewerActivity
 import com.cherry.lib.doc.bean.DocSourceType
@@ -34,6 +42,7 @@ import com.cherry.permissions.lib.annotations.AfterPermissionGranted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 import kotlin.collections.orEmpty
 import kotlin.getValue
 
@@ -65,12 +74,17 @@ class PdfTabPager : Fragment() {
     private fun setupRecyclerView() {
         adapter = AllFileAdapter(listener = object : AllFileAdapter.Listener {
             override fun onItemClick(item: DocInfo, position: Int) {
-                var path = item.path ?: ""
-                if (checkSupport(path)) {
+                val path = item.path ?: return
+                val file = File(path)
+
+                if (!checkSupport(path)) return
+
+                if (file.extension.lowercase() == "pdf" && isPdfEncrypted(file)) {
+                    showInputPasswordDialog(file)
+                } else {
                     openDoc(path, DocSourceType.PATH)
                 }
             }
-
             override fun onShare(item: DocInfo) {
                 item.path?.let { requireContext().shareFile(it) }
             }
@@ -153,7 +167,7 @@ class PdfTabPager : Fragment() {
                 }
 
                 override fun onDelete(doc: DocInfo) {
-                    doc.path?.let { deleteFileSmart(requireContext(),it) }
+                    showDeleteDialog(doc)
                 }
 
                 override fun onShare(doc: DocInfo) {
@@ -161,6 +175,68 @@ class PdfTabPager : Fragment() {
                 }
             }
         ).show(parentFragmentManager, "OptionPdfBottomSheet")
+    }
+
+    private fun showInputPasswordDialog(file: File) {
+        Dialog1EditTextFragment.newInstance(
+            title = getString(R.string.text_enter_password),
+            defaultText = "",
+            positiveText = getString(R.string.text_okay),
+            negativeText = getString(R.string.text_cancel),
+            resultKey = RESULT_KEY_PASSWORD_PDF
+        ).show(parentFragmentManager, RESULT_KEY_PASSWORD_PDF)
+
+        parentFragmentManager.setFragmentResultListener(
+            RESULT_KEY_PASSWORD_PDF,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT) ?: return@setFragmentResultListener
+            unlockAndOpenPdf(file, password)
+        }
+    }
+
+    private fun unlockAndOpenPdf(file: File, password: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val unlocked = unlockPdfToCache(requireContext(), file, password)
+
+            launch(Dispatchers.Main) {
+                if (unlocked != null && unlocked.exists()) {
+                    openDoc(unlocked.absolutePath, DocSourceType.PATH)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.text_rename),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    private fun showDeleteDialog(doc: DocInfo) {
+        val (date, time) = doc.lastModified.formatDateTime()
+        val fileImage = doc.getTypeIcon()
+        val fileType = doc.getFileType() ?: ""
+        doc.fileName?.let {
+            DialogFragmentDelete(
+                fileName = it,
+                fileType = fileType,
+                fileImage = fileImage,
+                date = date,
+                time = time,
+                listener = object : OnDeleteConfirmListener {
+                    override fun onDelete() {
+                        viewModel.deleteDoc(doc)
+                    }
+
+                    override fun onCancel() {
+                        // optional
+                    }
+                }
+            )
+
+        }?.show(parentFragmentManager, "delete_dialog")
+
     }
 
     fun checkSupport(path: String): Boolean {

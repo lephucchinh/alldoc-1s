@@ -1,6 +1,7 @@
 package com.cherry.doc
 
 import android.app.Application
+import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
 
 /*
  * -----------------------------------------------------------------
@@ -13,5 +14,9 @@ import android.app.Application
  * -----------------------------------------------------------------
  */
 
-class App: Application() {
+class App : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        PDFBoxResourceLoader.init(applicationContext)
+    }
 }

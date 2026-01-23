@@ -5,6 +5,8 @@ import android.content.Context
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException
 import java.io.File
 
 object FileManager {
@@ -65,5 +67,54 @@ object FileManager {
 
         return false
     }
+
+    fun isPdfEncrypted(file: File): Boolean {
+        return try {
+            PDDocument.load(file).close()
+            false
+        } catch (e: InvalidPasswordException) {
+            true
+        }
+    }
+
+    fun unlockPdfToCache(
+        context: Context,
+        src: File,
+        password: String
+    ): File? {
+        try {
+            // 1️⃣ Thử bằng password user
+            return unlockInternal(context, src, password)
+        } catch (_: InvalidPasswordException) {
+            // 2️⃣ Thử password rỗng (owner-only PDF)
+            return try {
+                unlockInternal(context, src, "")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    private fun unlockInternal(
+        context: Context,
+        src: File,
+        password: String
+    ): File {
+        val document = PDDocument.load(src, password)
+
+        document.isAllSecurityToBeRemoved = true
+
+        val outFile = File(
+            context.cacheDir,
+            "unlocked_${System.currentTimeMillis()}.pdf"
+        )
+
+        document.save(outFile)
+        document.close()
+
+        return outFile
+    }
+
 
 }
