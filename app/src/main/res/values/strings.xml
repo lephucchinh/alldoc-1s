@@ -47,6 +47,7 @@
 
     <!--Create by Chinhlp : 21/1/2016-->
     <string name="title_home_screen">All PDF Reader</string>
+    <string name="title_bottom_sheet_create_file">Create File</string>
     <string name="text_all">All</string>
 
     <string name="text_bottom_nav_1">All Files</string>
@@ -79,5 +80,10 @@
     <string name="error_password_empty">Password cannot be empty</string>
     <string name="error_password_too_short">Password too short</string>
     <string name="error_password_not_match">Password does not match</string>
+
+    <string name="title_img_to_pdf">Image to PDF</string>
+    <string name="title_merge_file">Merge File</string>
+    <string name="title_create_pdf">Create PDF</string>
+    <string name="title_scan_pdf">Scan PDF</string>
 
 </resources>

@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.databinding.PageAllFileBinding
+import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.ui.allfile.AllFileViewModel
 import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
 import com.cherry.doc.ui.main.MainActivity
@@ -43,6 +44,8 @@ import com.cherry.permissions.lib.EasyPermissions
 import com.cherry.permissions.lib.annotations.AfterPermissionGranted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.collections.orEmpty
@@ -131,7 +134,7 @@ class PdfTabPager : Fragment() {
                 bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
                     ?: return@setFragmentResultListener
 
-            pendingRenameItem?.let { viewModel.renameDoc(it, newName) }
+            pendingRenameItem?.let { FilesHelper.renameDoc(it, newName) }
             pendingRenameItem = null
         }
     }
@@ -256,7 +259,7 @@ class PdfTabPager : Fragment() {
                 time = time,
                 listener = object : OnDeleteConfirmListener {
                     override fun onDelete() {
-                        viewModel.deleteDoc(doc)
+                        FilesHelper.deleteDoc(doc)
                     }
 
                     override fun onCancel() {
@@ -288,12 +291,12 @@ class PdfTabPager : Fragment() {
     }
 
     private fun loadData() {
-        viewModel.allFiles.observe(viewLifecycleOwner) { groups ->
+        FilesHelper.allFiles.onEach { groups ->
 
             val allFiles = groups?.flatMap { it.docList.orEmpty() }
 
             adapter.submitList(allFiles?.filter { isSupportedDoc(it) })
-        }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
         requestStoragePermission()
 
     }
@@ -314,9 +317,9 @@ class PdfTabPager : Fragment() {
     private fun requestStoragePermission() {
         if (hasRwPermission()) {
             // Have permission, do things!
-            CoroutineScope(Dispatchers.Main).launch {
-                viewModel.loadAllFiles()
-            }
+//            CoroutineScope(Dispatchers.Main).launch {
+//                FilesHelper.loadAllFiles()
+//            }
 
         } else {
             // Ask for one permission

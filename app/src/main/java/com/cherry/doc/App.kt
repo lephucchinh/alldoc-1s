@@ -15,8 +15,14 @@ import com.tom_roush.pdfbox.android.PDFBoxResourceLoader
  */
 
 class App : Application() {
+
+    companion object {
+        lateinit var instance: App
+    }
+
     override fun onCreate() {
         super.onCreate()
+        instance = this
         PDFBoxResourceLoader.init(applicationContext)
     }
 }
