@@ -28,6 +28,7 @@ import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_ALL_APP
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_ALL_FILE
 import com.cherry.doc.ui.widgets.DialogFragmentDelete
+import com.cherry.doc.ui.widgets.DialogSetPasswordFragment
 import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
 import com.cherry.doc.util.DocUtil
@@ -184,7 +185,7 @@ class AllFilePager : Fragment() {
                 }
 
                 override fun onLockPdf(doc: DocInfo) {
-                    File(doc.path).lockPdf(password = "123")
+                    showDialogLockPdf(doc)
                 }
 
                 override fun onDelete(doc: DocInfo) {
@@ -222,6 +223,33 @@ class AllFilePager : Fragment() {
 
         }?.show(parentFragmentManager, "delete_dialog")
 
+    }
+
+
+    private fun showDialogLockPdf(doc: DocInfo) {
+        val file = File(doc.path ?: return)
+
+        DialogSetPasswordFragment { password ->
+            lifecycleScope.launch(Dispatchers.IO) {
+                val success = file.lockPdf(password = password)
+
+                launch(Dispatchers.Main) {
+                    if (success) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.lock_success),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.lock_failed),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }.show(parentFragmentManager, "SET_PASSWORD")
     }
 
     private fun initListener() {

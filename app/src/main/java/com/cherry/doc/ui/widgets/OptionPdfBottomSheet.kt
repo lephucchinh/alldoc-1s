@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.databinding.BottomSheetOptionBinding
@@ -54,6 +55,7 @@ class OptionPdfBottomSheet(
 
     private fun bindData() = with(binding) {
         // icon
+        btnLockPdf.isVisible = (docInfo.getFileType() == "PDF")
         val icon = docInfo.getTypeIcon()
         if (icon != -1) imgFile.setImageResource(icon)
 

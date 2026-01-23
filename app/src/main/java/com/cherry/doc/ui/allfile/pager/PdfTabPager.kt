@@ -26,12 +26,14 @@ import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_EX
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_PDF
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PDF
 import com.cherry.doc.ui.widgets.DialogFragmentDelete
+import com.cherry.doc.ui.widgets.DialogSetPasswordFragment
 import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
 import com.cherry.doc.util.FileManager.deleteFileSmart
 import com.cherry.doc.util.FileManager.isPdfEncrypted
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
+import com.cherry.doc.util.lockPdf
 import com.cherry.doc.util.shareFile
 import com.cherry.lib.doc.DocViewerActivity
 import com.cherry.lib.doc.bean.DocSourceType
@@ -163,7 +165,7 @@ class PdfTabPager : Fragment() {
                 }
 
                 override fun onLockPdf(doc: DocInfo) {
-                    // TODO: lock pdf
+                    showDialogLockPdf(doc)
                 }
 
                 override fun onDelete(doc: DocInfo) {
@@ -176,6 +178,34 @@ class PdfTabPager : Fragment() {
             }
         ).show(parentFragmentManager, "OptionPdfBottomSheet")
     }
+
+
+    private fun showDialogLockPdf(doc: DocInfo) {
+        val file = File(doc.path ?: return)
+
+        DialogSetPasswordFragment { password ->
+            lifecycleScope.launch(Dispatchers.IO) {
+                val success = file.lockPdf(password = password)
+
+                launch(Dispatchers.Main) {
+                    if (success) {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.lock_success),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.lock_failed),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }.show(parentFragmentManager, "SET_PASSWORD")
+    }
+
 
     private fun showInputPasswordDialog(file: File) {
         Dialog1EditTextFragment.newInstance(
