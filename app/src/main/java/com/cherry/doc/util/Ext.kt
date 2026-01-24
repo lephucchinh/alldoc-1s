@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.SystemClock
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -17,6 +18,23 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+private const val DEFAULT_CLICK_INTERVAL = 600L
+
+fun View.setSingleClickListener(
+    interval: Long = DEFAULT_CLICK_INTERVAL,
+    onClick: (View) -> Unit
+) {
+    var lastClickTime = 0L
+
+    setOnClickListener { v ->
+        val currentTime = SystemClock.elapsedRealtime()
+        if (currentTime - lastClickTime >= interval) {
+            lastClickTime = currentTime
+            onClick(v)
+        }
+    }
+}
 
 fun Activity.hideSystemBars() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

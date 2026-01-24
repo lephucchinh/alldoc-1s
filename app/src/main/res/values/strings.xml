@@ -60,6 +60,7 @@
     <string name="text_enter_password">Enter Password</string>
     <string name="text_set_password">Set Password</string>
     <string name="text_confirm_password">Confirm Password</string>
+    <string name="text_save_as">Save as</string>
 
 
     <string name="text_save">Save</string>

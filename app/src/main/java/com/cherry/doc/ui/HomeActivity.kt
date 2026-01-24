@@ -9,17 +9,29 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
+import com.cherry.doc.data.SaveImagesResult
+import com.cherry.doc.data.SavePdfResult
 import com.cherry.doc.databinding.ActivityHomeBinding
+import com.cherry.doc.repository.FilesHelper
+import com.cherry.doc.repository.FilesHelper.loadAllFiles
 import com.cherry.doc.ui.home.all.AllFileFragment
 import com.cherry.doc.ui.main.MainActivity
+import com.cherry.doc.ui.widgets.BottomSheetCreateFile
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_ALL_APP
+import com.cherry.doc.ui.widgets.DialogFragmentCreatePdf
 import com.cherry.doc.ui.widgets.OpenSdkScanner.registerDocumentScanner
 import com.cherry.doc.ui.widgets.OpenSdkScanner.startScanDocument
 import com.cherry.doc.util.DocUtil
+import com.cherry.doc.util.FileManager.renameAndSavePdfToExternal
+import com.cherry.doc.util.FileManager.saveImagesToExternal
 import com.cherry.doc.util.hideSystemBars
 import com.cherry.permissions.lib.EasyPermissions
 import com.cherry.permissions.lib.annotations.AfterPermissionGranted
@@ -104,18 +116,28 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    // =====================================================
-    // BOTTOM NAV CLICK
-    // =====================================================
     private fun initListener() = with(binding) {
         scannerLauncher = registerDocumentScanner(
             activity = this@HomeActivity,
             onImagesResult = { images ->
-                // TODO: show preview RecyclerView / ImageView
+                when (
+                    val result = saveImagesToExternal(
+                        context = this@HomeActivity,
+                        images = images,
+                        baseName = "scan_${System.currentTimeMillis()}",
+                        subFolder = "ScannedImages"
+                    )
+                ) {
+                    is SaveImagesResult.Success -> {
+                    }
+
+                    is SaveImagesResult.Error -> {
+                    }
+                }
             },
             onPdfResult = { pdf ->
                 pdf?.let {
-                    // TODO: save / open / share pdf
+                    showDialogCreatePdf(pdf)
                 }
             }
         )
@@ -140,16 +162,12 @@ class HomeActivity : AppCompatActivity() {
         }
 
         btnScanner.setOnClickListener {
-            startScanDocument(
-                activity = this@HomeActivity,
-                launcher = scannerLauncher
-            )
+
+            showBottomSheetCreateFile()
+
         }
     }
 
-    // =====================================================
-    // CORE: SHOW / HIDE FRAGMENT
-    // =====================================================
     private fun showFragment(tag: String) {
         val fm = supportFragmentManager
 
@@ -174,10 +192,60 @@ class HomeActivity : AppCompatActivity() {
         currentTag = tag
     }
 
+    private fun showDialogCreatePdf(pdf: File) {
+        DialogFragmentCreatePdf { newName ->
 
-    // =====================================================
-    // BOTTOM UI STATE
-    // =====================================================
+            when (
+                val result = renameAndSavePdfToExternal(
+                    context = this,
+                    sourceFile = pdf,
+                    newName = newName,
+                    subFolder = "ScannedPDF"
+                )
+            ) {
+                is SavePdfResult.Success -> {
+                    // ✅ lưu thành công
+                    CoroutineScope(Dispatchers.Main).launch {
+                        loadAllFiles()
+                    }
+                }
+
+                is SavePdfResult.Error -> {
+                    Toast.makeText(this, result.reason, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }.show(supportFragmentManager, "CreatePdf")
+
+
+    }
+
+
+    private fun showBottomSheetCreateFile() {
+        BottomSheetCreateFile(object : BottomSheetCreateFile.Listener {
+            override fun onImageToPdf() {
+                // chọn ảnh -> pdf
+            }
+
+            override fun onScanPdf() {
+                startScanDocument(
+                    activity = this@HomeActivity,
+                    launcher = scannerLauncher
+                )
+            }
+
+            override fun onMergePdf() {
+                // merge pdf
+            }
+
+            override fun onCreatePdf() {
+                // tạo pdf trống
+            }
+        }).show(supportFragmentManager, "BottomSheetCreateFile")
+
+    }
+
+
     private fun updateBottomUI(screen: HomeScreen) {
         resetBottomUI()
 
