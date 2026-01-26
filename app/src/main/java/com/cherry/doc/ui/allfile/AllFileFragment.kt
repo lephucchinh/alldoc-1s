@@ -1,6 +1,11 @@
-package com.cherry.doc.ui.home.all
+package com.cherry.doc.ui.allfile
 
+import android.animation.ValueAnimator
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.cherry.doc.R
 import com.cherry.doc.databinding.FragmentHomeAllFilesBinding
 import com.cherry.doc.ui.allfile.adapter.AllFilePagerAdapter
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
 class AllFileFragment : Fragment() {
@@ -48,15 +54,15 @@ class AllFileFragment : Fragment() {
         }.attach()
 
         binding.tabLayout.addOnTabSelectedListener(object :
-            com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
+            TabLayout.OnTabSelectedListener {
 
-            override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab) {
+            override fun onTabSelected(tab: TabLayout.Tab) {
                 updateBgTitleByTab(tab.position)
             }
 
-            override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab) {}
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
 
-            override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
         updateBgTitleByTab(0)
@@ -66,28 +72,28 @@ class AllFileFragment : Fragment() {
         val title = getString(R.string.title_home_screen) // "All PDF Reader"
 
         if (position == 0) {
-            val spannable = android.text.SpannableString(title)
+            val spannable = SpannableString(title)
 
             val allPdfEnd = title.indexOf("Reader") // vị trí bắt đầu "Reader"
 
             // All PDF → BLACK
             spannable.setSpan(
-                android.text.style.ForegroundColorSpan(
+                ForegroundColorSpan(
                     requireContext().getColor(R.color.black)
                 ),
                 0,
                 allPdfEnd,
-                android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
 
             // Reader → RED
             spannable.setSpan(
-                android.text.style.ForegroundColorSpan(
+                ForegroundColorSpan(
                     requireContext().getColor(R.color.red_pdf)
                 ),
                 allPdfEnd,
                 title.length,
-                android.text.Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
 
             binding.txtTitleHomeScreen.text = spannable
@@ -117,7 +123,7 @@ class AllFileFragment : Fragment() {
         )
 
         binding.btnSetting.imageTintList =
-            android.content.res.ColorStateList.valueOf(
+            ColorStateList.valueOf(
                 requireContext().getColor(
                     if (isAllTab) R.color.black else R.color.white
                 )
@@ -159,7 +165,7 @@ class AllFileFragment : Fragment() {
 
 
     private fun animateBgColor(@ColorInt from: Int, @ColorInt to: Int) {
-        val animator = android.animation.ValueAnimator.ofArgb(from, to)
+        val animator = ValueAnimator.ofArgb(from, to)
         animator.duration = 250
         animator.addUpdateListener {
             binding.bgTitle.setBackgroundColor(it.animatedValue as Int)

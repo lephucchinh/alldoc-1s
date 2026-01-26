@@ -12,7 +12,7 @@ import com.cherry.doc.data.SaveImagesResult
 import com.cherry.doc.data.SavePdfResult
 import com.cherry.doc.databinding.ActivityHomeBinding
 import com.cherry.doc.repository.FilesHelper.loadAllFiles
-import com.cherry.doc.ui.home.all.AllFileFragment
+import com.cherry.doc.ui.allfile.AllFileFragment
 import com.cherry.doc.ui.widgets.BottomSheetCreateFile
 import com.cherry.doc.ui.widgets.DialogFragmentCreatePdf
 import com.cherry.doc.ui.widgets.OpenSdkScanner.registerDocumentScanner

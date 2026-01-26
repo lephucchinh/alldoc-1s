@@ -21,13 +21,14 @@ import com.cherry.doc.databinding.PageAllFileBinding
 import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.ui.allfile.AllFileViewModel
 import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
-import com.cherry.doc.ui.main.MainActivity
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_WORD
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_WORD
 import com.cherry.doc.ui.widgets.DialogFragmentDelete
 import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
+import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION
+import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION11
 import com.cherry.doc.util.FileManager.isPdfEncrypted
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
@@ -115,7 +116,8 @@ class WordTabPager : Fragment() {
             RESULT_KEY_PASSWORD_WORD,
             viewLifecycleOwner
         ) { _, bundle ->
-            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT) ?: return@setFragmentResultListener
+            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
+                ?: return@setFragmentResultListener
             unlockAndOpenPdf(file, password)
         }
     }
@@ -141,7 +143,7 @@ class WordTabPager : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11) {
+        if (requestCode == REQUEST_CODE_STORAGE_PERMISSION11) {
             if (hasRwPermission()) {
                 requestStoragePermission()
             }
@@ -279,7 +281,7 @@ class WordTabPager : Fragment() {
     }
 
 
-    @AfterPermissionGranted(MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION)
+    @AfterPermissionGranted(REQUEST_CODE_STORAGE_PERMISSION)
     private fun requestStoragePermission() {
         if (hasRwPermission()) {
             // Have permission, do things!
@@ -296,7 +298,7 @@ class WordTabPager : Fragment() {
             EasyPermissions.requestPermissions(
                 this,
                 "This app needs access to your storage to load local doc",
-                MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION,
+                REQUEST_CODE_STORAGE_PERMISSION,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
             )
@@ -309,11 +311,11 @@ class WordTabPager : Fragment() {
             intent.addCategory("android.intent.category.DEFAULT")
             intent.data =
                 Uri.parse(java.lang.String.format("package:%s", requireActivity().packageName))
-            startActivityForResult(intent, MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11)
+            startActivityForResult(intent, REQUEST_CODE_STORAGE_PERMISSION11)
         } catch (e: Exception) {
             val intent = Intent()
             intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
-            startActivityForResult(intent, MainActivity.Companion.REQUEST_CODE_STORAGE_PERMISSION11)
+            startActivityForResult(intent, REQUEST_CODE_STORAGE_PERMISSION11)
         }
     }
 
