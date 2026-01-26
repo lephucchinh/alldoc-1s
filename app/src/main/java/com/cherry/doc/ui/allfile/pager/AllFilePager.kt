@@ -1,7 +1,6 @@
 package com.cherry.doc.ui.allfile.pager
 
 import android.Manifest
-import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -14,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
@@ -24,7 +22,6 @@ import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.ui.allfile.AllFileViewModel
 import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
 import com.cherry.doc.ui.main.MainActivity
-import com.cherry.doc.ui.main.MainActivity.Companion.TAG
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_ALL_APP
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_ALL_FILE
@@ -32,8 +29,6 @@ import com.cherry.doc.ui.widgets.DialogFragmentDelete
 import com.cherry.doc.ui.widgets.DialogSetPasswordFragment
 import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
-import com.cherry.doc.util.DocUtil
-import com.cherry.doc.util.FileManager.deleteFileSmart
 import com.cherry.doc.util.FileManager.isPdfEncrypted
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime

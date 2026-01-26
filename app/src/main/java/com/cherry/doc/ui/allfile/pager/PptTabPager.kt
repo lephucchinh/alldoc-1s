@@ -24,12 +24,10 @@ import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
 import com.cherry.doc.ui.main.MainActivity
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_PPT
-import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PDF
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PPT
 import com.cherry.doc.ui.widgets.DialogFragmentDelete
 import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
-import com.cherry.doc.util.FileManager.deleteFileSmart
 import com.cherry.doc.util.FileManager.isPdfEncrypted
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
@@ -40,14 +38,11 @@ import com.cherry.lib.doc.bean.FileType
 import com.cherry.lib.doc.util.FileUtils
 import com.cherry.permissions.lib.EasyPermissions
 import com.cherry.permissions.lib.annotations.AfterPermissionGranted
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.io.File
-import kotlin.collections.orEmpty
-import kotlin.getValue
 
 class PptTabPager : Fragment() {
 

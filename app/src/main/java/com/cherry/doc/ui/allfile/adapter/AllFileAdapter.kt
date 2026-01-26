@@ -1,7 +1,6 @@
 package com.cherry.doc.ui.allfile.adapter
 
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -11,7 +10,8 @@ import com.cherry.doc.databinding.ItemFileBinding
 import com.cherry.doc.util.formatDateTime
 import com.cherry.lib.doc.R
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class AllFileAdapter(
     private val listener: Listener? = null,

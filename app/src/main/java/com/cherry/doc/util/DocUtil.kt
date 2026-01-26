@@ -8,12 +8,8 @@ import com.cherry.doc.data.DocGroupInfo
 import com.cherry.doc.data.DocInfo
 import com.cherry.lib.doc.bean.FileType
 import com.cherry.lib.doc.util.FileUtils
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.text.SimpleDateFormat
-import java.util.ArrayList
 import java.util.Date
 
 /*

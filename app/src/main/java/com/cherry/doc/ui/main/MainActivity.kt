@@ -14,8 +14,8 @@ import android.view.View
 import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.cherry.doc.ui.adapter.DocAdapter
 import com.cherry.doc.R
+import com.cherry.doc.ui.adapter.DocAdapter
 import com.cherry.doc.ui.scanner.ScannerActivity
 import com.cherry.doc.util.BasicSet
 import com.cherry.doc.util.DocUtil

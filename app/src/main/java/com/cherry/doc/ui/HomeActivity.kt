@@ -1,48 +1,29 @@
 package com.cherry.doc.ui
 
-import android.Manifest
-import android.app.Activity
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.Settings
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
-import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
 import com.cherry.doc.data.SaveImagesResult
 import com.cherry.doc.data.SavePdfResult
 import com.cherry.doc.databinding.ActivityHomeBinding
-import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.repository.FilesHelper.loadAllFiles
 import com.cherry.doc.ui.home.all.AllFileFragment
-import com.cherry.doc.ui.main.MainActivity
 import com.cherry.doc.ui.widgets.BottomSheetCreateFile
-import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
-import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_ALL_APP
 import com.cherry.doc.ui.widgets.DialogFragmentCreatePdf
 import com.cherry.doc.ui.widgets.OpenSdkScanner.registerDocumentScanner
 import com.cherry.doc.ui.widgets.OpenSdkScanner.startScanDocument
-import com.cherry.doc.util.DocUtil
 import com.cherry.doc.util.FileManager.renameAndSavePdfToExternal
 import com.cherry.doc.util.FileManager.saveImagesToExternal
 import com.cherry.doc.util.hideSystemBars
-import com.cherry.permissions.lib.EasyPermissions
-import com.cherry.permissions.lib.annotations.AfterPermissionGranted
-import com.google.mlkit.vision.documentscanner.GmsDocumentScannerOptions
-import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
-import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
-import java.io.FileOutputStream
 
 
 class HomeActivity : AppCompatActivity() {

@@ -2,13 +2,13 @@ package com.cherry.doc.ui.widgets
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.fragment.app.DialogFragment
 import com.cherry.doc.databinding.FragmentDialogDeleteBinding
-import java.io.File
 
 class DialogFragmentDelete(
     private val fileName: String,

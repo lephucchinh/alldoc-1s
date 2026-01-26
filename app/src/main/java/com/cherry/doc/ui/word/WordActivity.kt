@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.cherry.doc.R
 import com.cherry.lib.doc.util.Constant
 import com.cherry.lib.doc.widget.PoiViewer
-import java.lang.Exception
 
 class WordActivity : AppCompatActivity() {
     companion object {
