@@ -1,0 +1,8 @@
+<resources>
+
+    <style name="TedImagePickerTheme" parent="TedImagePickerTheme.Base">
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+</resources>

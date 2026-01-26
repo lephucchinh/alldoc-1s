@@ -1,6 +1,8 @@
 package com.cherry.doc.ui
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -17,9 +19,13 @@ import com.cherry.doc.ui.widgets.BottomSheetCreateFile
 import com.cherry.doc.ui.widgets.DialogFragmentCreatePdf
 import com.cherry.doc.ui.widgets.OpenSdkScanner.registerDocumentScanner
 import com.cherry.doc.ui.widgets.OpenSdkScanner.startScanDocument
+import com.cherry.doc.util.FileManager.createEmptyPdfToExternal
+import com.cherry.doc.util.FileManager.createPdfFromImagesToExternal
 import com.cherry.doc.util.FileManager.renameAndSavePdfToExternal
 import com.cherry.doc.util.FileManager.saveImagesToExternal
 import com.cherry.doc.util.hideSystemBars
+import com.cherry.doc.util.setSingleClickListener
+import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -118,31 +124,31 @@ class HomeActivity : AppCompatActivity() {
             },
             onPdfResult = { pdf ->
                 pdf?.let {
-                    showDialogCreatePdf(pdf)
+                    showDialogCreatePdfFromScanner(pdf)
                 }
             }
         )
-        btnAllFile.setOnClickListener {
+        btnAllFile.setSingleClickListener {
             showFragment(TAG_ALL)
             updateBottomUI(HomeScreen.ALL)
         }
 
-        btnRecent.setOnClickListener {
+        btnRecent.setSingleClickListener {
             showFragment(TAG_RECENT)
             updateBottomUI(HomeScreen.RECENT)
         }
 
-        btnFavorite.setOnClickListener {
+        btnFavorite.setSingleClickListener {
             showFragment(TAG_FAV)
             updateBottomUI(HomeScreen.FAVOURITE)
         }
 
-        btnTools.setOnClickListener {
+        btnTools.setSingleClickListener {
             showFragment(TAG_TOOLS)
             updateBottomUI(HomeScreen.TOOLS)
         }
 
-        btnScanner.setOnClickListener {
+        btnScanner.setSingleClickListener {
 
             showBottomSheetCreateFile()
 
@@ -173,7 +179,7 @@ class HomeActivity : AppCompatActivity() {
         currentTag = tag
     }
 
-    private fun showDialogCreatePdf(pdf: File) {
+    private fun showDialogCreatePdfFromScanner(pdf: File) {
         DialogFragmentCreatePdf { newName ->
 
             when (
@@ -182,6 +188,30 @@ class HomeActivity : AppCompatActivity() {
                     sourceFile = pdf,
                     newName = newName,
                     subFolder = "ScannedPDF"
+                )
+            ) {
+                is SavePdfResult.Success -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        loadAllFiles()
+                    }
+                }
+
+                is SavePdfResult.Error -> {
+                    Toast.makeText(this, result.reason, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }.show(supportFragmentManager, "CreatePdfFromScanner")
+    }
+
+    private fun showDialogImageToPdf(uriList: List<Uri>) {
+        DialogFragmentCreatePdf { newName ->
+
+            when (
+                val result = createPdfFromImagesToExternal(
+                    context = this,
+                    images = uriList,
+                    fileName = newName
                 )
             ) {
                 is SavePdfResult.Success -> {
@@ -196,16 +226,33 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
 
+        }.show(supportFragmentManager, "ImageToPdf")
+    }
+
+
+    private fun showDialogCreatePdf() {
+        DialogFragmentCreatePdf { newName ->
+
+            when (createEmptyPdfToExternal(this, newName)) {
+                is SavePdfResult.Success -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        loadAllFiles()
+                    }
+                }
+
+                is SavePdfResult.Error -> {
+//                Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }.show(supportFragmentManager, "CreatePdf")
 
 
     }
 
-
     private fun showBottomSheetCreateFile() {
         BottomSheetCreateFile(object : BottomSheetCreateFile.Listener {
             override fun onImageToPdf() {
-                // chọn ảnh -> pdf
+                setNormalMultiButton()
             }
 
             override fun onScanPdf() {
@@ -220,10 +267,24 @@ class HomeActivity : AppCompatActivity() {
             }
 
             override fun onCreatePdf() {
-                // tạo pdf trống
+                showDialogCreatePdf()
             }
         }).show(supportFragmentManager, "BottomSheetCreateFile")
 
+    }
+
+    private fun setNormalMultiButton() {
+        TedImagePicker.with(this)
+            //.mediaType(MediaType.IMAGE)
+            //.scrollIndicatorDateFormat("YYYYMMDD")
+            //.buttonGravity(ButtonGravity.BOTTOM)
+            .dropDownAlbum()
+            //.buttonBackground(R.drawable.btn_sample_done_button)
+            //.buttonTextColor(R.color.sample_yellow)
+            .errorListener { message -> Log.d("ted", "message: $message") }
+            .cancelListener { Log.d("ted", "image select cancel") }
+            //.selectedUri(selectedUriList)
+            .startMultiImage { list: List<Uri> -> showDialogImageToPdf(list) }
     }
 
 

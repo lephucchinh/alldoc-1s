@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.databinding.ItemFileBinding
 import com.cherry.doc.util.formatDateTime
+import com.cherry.doc.util.setSingleClickListener
 import com.cherry.lib.doc.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -50,13 +51,13 @@ class AllFileAdapter(
 
 
             // ===== CLICK EVENTS =====
-            root.setOnClickListener {
+            root.setSingleClickListener {
                 listener?.onItemClick(item, position)
             }
 
-            txtShare.setOnClickListener { listener?.onShare(item) }
-            txtRename.setOnClickListener { listener?.onRename(item, position) }
-            imgOption.setOnClickListener { listener?.onOption(item) }
+            txtShare.setSingleClickListener { listener?.onShare(item) }
+            txtRename.setSingleClickListener { listener?.onRename(item, position) }
+            imgOption.setSingleClickListener { listener?.onOption(item) }
         }
     }
 
