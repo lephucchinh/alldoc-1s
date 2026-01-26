@@ -73,40 +73,5 @@ class AllFileAdapter(
     override fun onBindViewHolder(holder: FileViewHolder, position: Int) {
         holder.bind(getItem(position), position)
     }
-
-    // ===== Utils =====
-    private fun formatDateTime(time: String?): Pair<String, String> {
-        if (time.isNullOrBlank()) return "" to ""
-
-        val millis = parseDateToMillis(time) ?: return "" to ""
-        val date = Date(millis)
-
-        val dateFmt = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-        val timeFmt = SimpleDateFormat("HH:mm", Locale.getDefault())
-
-        return dateFmt.format(date) to timeFmt.format(date)
-    }
-
-    private fun parseDateToMillis(raw: String): Long? {
-        val formats = listOf(
-            "yyyy/MM/dd HH:mm",
-            "yyyy-MM-dd HH:mm",
-            "yyyy/MM/dd HH:mm:ss",
-            "yyyy-MM-dd HH:mm:ss",
-            "yyyy-MM-dd'T'HH:mm:ss",
-            "yyyy-MM-dd'T'HH:mm:ss.SSS",
-        )
-
-        for (pattern in formats) {
-            try {
-                val sdf = SimpleDateFormat(pattern, Locale.getDefault())
-                sdf.isLenient = false
-                val date = sdf.parse(raw)
-                if (date != null) return date.time
-            } catch (_: Exception) {
-            }
-        }
-        return null
-    }
 }
 
