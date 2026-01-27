@@ -9,14 +9,19 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
+import com.cherry.doc.data.DocInfo
 import com.cherry.doc.data.SaveImagesResult
 import com.cherry.doc.data.SavePdfResult
 import com.cherry.doc.databinding.ActivityHomeBinding
+import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.repository.FilesHelper.loadAllFiles
 import com.cherry.doc.ui.allfile.AllFileFragment
+import com.cherry.doc.ui.createdsuccess.PdfFileCreateSuccessActivity
 import com.cherry.doc.ui.widgets.BottomSheetCreateFile
 import com.cherry.doc.ui.widgets.DialogFragmentCreatePdf
+import com.cherry.doc.ui.widgets.DialogLoading
 import com.cherry.doc.ui.widgets.OpenSdkScanner.registerDocumentScanner
 import com.cherry.doc.ui.widgets.OpenSdkScanner.startScanDocument
 import com.cherry.doc.util.FileManager.createEmptyPdfToExternal
@@ -28,7 +33,9 @@ import com.cherry.doc.util.setSingleClickListener
 import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 
@@ -42,6 +49,8 @@ class HomeActivity : AppCompatActivity() {
         const val TAG_FAV = "FAVOURITE"
         const val TAG_TOOLS = "TOOLS"
     }
+
+    private lateinit var loadingDialog: DialogLoading
 
     private lateinit var currentTag: String
     private lateinit var scannerLauncher: ActivityResultLauncher<IntentSenderRequest>
@@ -72,6 +81,7 @@ class HomeActivity : AppCompatActivity() {
                 else -> HomeScreen.ALL
             }
         )
+        loadingDialog = DialogLoading(this)
 
         initListener()
     }
@@ -182,47 +192,72 @@ class HomeActivity : AppCompatActivity() {
     private fun showDialogCreatePdfFromScanner(pdf: File) {
         DialogFragmentCreatePdf { newName ->
 
-            when (
-                val result = renameAndSavePdfToExternal(
-                    context = this,
-                    sourceFile = pdf,
-                    newName = newName,
-                    subFolder = "ScannedPDF"
-                )
-            ) {
-                is SavePdfResult.Success -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        loadAllFiles()
-                    }
-                }
+            loadingDialog.show()
 
-                is SavePdfResult.Error -> {
-                    Toast.makeText(this, result.reason, Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+
+                val result = withContext(Dispatchers.IO) {
+                    renameAndSavePdfToExternal(
+                        context = this@HomeActivity,
+                        sourceFile = pdf,
+                        newName = newName,
+                        subFolder = "ScannedPDF"
+                    )
+                }
+                delay(1000)
+
+                when (result) {
+                    is SavePdfResult.Success -> {
+                        loadAllFiles()
+                        loadingDialog.dismiss()
+                        openCreatePdfSuccess(result.path)
+                    }
+
+                    is SavePdfResult.Error -> {
+                        Toast.makeText(
+                            this@HomeActivity,
+                            result.reason,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        loadingDialog.dismiss()
+                    }
                 }
             }
 
         }.show(supportFragmentManager, "CreatePdfFromScanner")
     }
 
+
     private fun showDialogImageToPdf(uriList: List<Uri>) {
         DialogFragmentCreatePdf { newName ->
 
-            when (
-                val result = createPdfFromImagesToExternal(
-                    context = this,
-                    images = uriList,
-                    fileName = newName
-                )
-            ) {
-                is SavePdfResult.Success -> {
-                    // ✅ lưu thành công
-                    CoroutineScope(Dispatchers.Main).launch {
-                        loadAllFiles()
-                    }
-                }
+            loadingDialog.show()
 
-                is SavePdfResult.Error -> {
-                    Toast.makeText(this, result.reason, Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                val result = withContext(Dispatchers.IO) {
+                    createPdfFromImagesToExternal(
+                        context = this@HomeActivity,
+                        images = uriList,
+                        fileName = newName
+                    )
+                }
+                delay(1000)
+
+                when (result) {
+                    is SavePdfResult.Success -> {
+                        loadAllFiles()
+                        loadingDialog.dismiss()
+                        openCreatePdfSuccess(result.path)
+                    }
+
+                    is SavePdfResult.Error -> {
+                        Toast.makeText(
+                            this@HomeActivity,
+                            result.reason,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        loadingDialog.dismiss()
+                    }
                 }
             }
 
@@ -233,21 +268,43 @@ class HomeActivity : AppCompatActivity() {
     private fun showDialogCreatePdf() {
         DialogFragmentCreatePdf { newName ->
 
-            when (createEmptyPdfToExternal(this, newName)) {
-                is SavePdfResult.Success -> {
-                    CoroutineScope(Dispatchers.Main).launch {
+            loadingDialog.show()
+
+            lifecycleScope.launch {
+
+                val result = withContext(Dispatchers.IO) {
+                    createEmptyPdfToExternal(
+                        context = this@HomeActivity,
+                        fileName = newName
+                    )
+                }
+                delay(1000)
+                when (result) {
+                    is SavePdfResult.Success -> {
                         loadAllFiles()
+                        loadingDialog.dismiss()
+                        openCreatePdfSuccess(result.path)
+                    }
+
+                    is SavePdfResult.Error -> {
+                        Toast.makeText(
+                            this@HomeActivity,
+                            result.reason,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        loadingDialog.dismiss()
                     }
                 }
-
-                is SavePdfResult.Error -> {
-//                Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
-                }
             }
+
         }.show(supportFragmentManager, "CreatePdf")
-
-
     }
+
+    private fun openCreatePdfSuccess(path: String) {
+
+        PdfFileCreateSuccessActivity.start(this, path)
+    }
+
 
     private fun showBottomSheetCreateFile() {
         BottomSheetCreateFile(object : BottomSheetCreateFile.Listener {

@@ -31,6 +31,9 @@
         <activity
             android:name="com.cherry.lib.doc.DocViewerActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.createdsuccess.PdfFileCreateSuccessActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.HomeActivity"

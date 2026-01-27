@@ -55,7 +55,6 @@
     <string name="text_bottom_nav_3">Favourites</string>
     <string name="text_bottom_nav_4">Tools</string>
 
-    <string name="text_share">Share</string>
     <string name="text_rename">Rename</string>
     <string name="text_enter_password">Enter Password</string>
     <string name="text_set_password">Set Password</string>
@@ -66,6 +65,11 @@
     <string name="text_save">Save</string>
     <string name="text_cancel">cancel</string>
     <string name="text_okay">Okay</string>
+    <string name="text_loading">Loading</string>
+
+    <string name="text_mail">Mail</string>
+    <string name="text_favourite">Favourite</string>
+    <string name="text_share">Share</string>
 
 
     <string name="text_add_favourite">Add to Favourite</string>
@@ -86,5 +90,6 @@
     <string name="title_merge_file">Merge File</string>
     <string name="title_create_pdf">Create PDF</string>
     <string name="title_scan_pdf">Scan PDF</string>
+    <string name="title_create_file_success">PDF File Created Successfully!</string>
 
 </resources>

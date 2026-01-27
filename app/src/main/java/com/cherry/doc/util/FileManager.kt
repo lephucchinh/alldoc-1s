@@ -167,8 +167,9 @@ object FileManager {
 
             // xoá file tạm
             sourceFile.delete()
+            val realPath = buildExternalFilePath(subFolder, fileName)
 
-            SavePdfResult.Success(uri)
+            SavePdfResult.Success(uri, path = realPath)
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -301,8 +302,9 @@ object FileManager {
             values.clear()
             values.put(MediaStore.MediaColumns.IS_PENDING, 0)
             resolver.update(uri, values, null, null)
+            val realPath = buildExternalFilePath(subFolder, finalName)
 
-            return SavePdfResult.Success(uri)
+            return SavePdfResult.Success(uri, path = realPath)
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -405,8 +407,9 @@ object FileManager {
             contentValues.clear()
             contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
             resolver.update(uri, contentValues, null, null)
+            val realPath = buildExternalFilePath(subFolder, finalName)
 
-            return SavePdfResult.Success(uri)
+            return SavePdfResult.Success(uri, path = realPath)
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -418,6 +421,17 @@ object FileManager {
         }
     }
 
+    fun buildExternalFilePath(
+        subFolder: String,
+        fileName: String
+    ): String {
+        return File(
+            Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS
+            ),
+            "$subFolder/$fileName"
+        ).absolutePath
+    }
 
 
 }

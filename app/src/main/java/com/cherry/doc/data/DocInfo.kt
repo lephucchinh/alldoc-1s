@@ -1,6 +1,8 @@
 package com.cherry.doc.data
 
+import android.os.Parcelable
 import com.cherry.doc.R
+import kotlinx.parcelize.Parcelize
 import java.io.File
 
 /*
@@ -10,11 +12,13 @@ import java.io.File
  * File: DocInfo
  * Author: Victor
  * Date: 2023/10/26 10:30
- * Description: 
+ * Description:
  * -----------------------------------------------------------------
  */
 
-class DocInfo {
+@Parcelize
+class DocInfo : Parcelable {
+
     var album: String? = null
     var fileName: String? = null
     var path: String? = null
@@ -61,13 +65,12 @@ class DocInfo {
     }
 
     fun getFileType(): String? {
-        try {
-            var type = path ?: ""
-            return type.substring(type.lastIndexOf(".")).split(".")[1].uppercase()
+        return try {
+            val type = path ?: ""
+            type.substring(type.lastIndexOf(".")).split(".")[1].uppercase()
         } catch (e: Exception) {
-            return mimeType
+            mimeType
         }
-
     }
 
     fun getNormalizedFileType(): String? {
@@ -86,7 +89,6 @@ class DocInfo {
             else -> mimeType?.uppercase()
         }
     }
-
 
     fun renameFileAndReturnNew(inputName: String): DocInfo? {
         val oldPath = path ?: return null
@@ -119,7 +121,4 @@ class DocInfo {
             }
         } else null
     }
-
-
-
 }

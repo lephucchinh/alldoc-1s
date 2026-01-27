@@ -58,4 +58,12 @@ object FilesHelper {
 
         return true
     }
+
+    fun getDocByPath(path: String): DocInfo? {
+        return _allFiles.value
+            .asSequence()
+            .flatMap { it.docList.orEmpty().asSequence() }
+            .firstOrNull { it.path == path }
+    }
+
 }
