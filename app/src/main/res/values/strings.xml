@@ -92,4 +92,7 @@
     <string name="title_scan_pdf">Scan PDF</string>
     <string name="title_create_file_success">PDF File Created Successfully!</string>
 
+
+    <string name="title_merge_pdf">Merge PDF</string>
+
 </resources>
