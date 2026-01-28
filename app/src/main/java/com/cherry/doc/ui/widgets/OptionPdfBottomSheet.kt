@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
+import com.cherry.doc.data.PdfCheckResult
 import com.cherry.doc.databinding.BottomSheetOptionBinding
+import com.cherry.doc.util.FileManager.checkPdfByPath
 import com.cherry.doc.util.formatDateTime
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -54,6 +56,27 @@ class OptionPdfBottomSheet(
 
 
     private fun bindData() = with(binding) {
+        docInfo.path?.let { path ->
+            val hasPassword = checkPdfHavePassword(path)
+
+            btnLockPdf.setText(
+                if (hasPassword)
+                    R.string.text_unlock_pdf
+                else
+                    R.string.text_lock_pdf
+            )
+
+            btnLockPdf.setCompoundDrawablesWithIntrinsicBounds(
+                if (hasPassword)
+                    R.drawable.ic_unlock   // drawableStart
+                else
+                    R.drawable.ic_lock,
+                0,
+                0,
+                0
+            )
+        }
+
         // icon
         btnLockPdf.isVisible = (docInfo.getFileType() == "PDF")
         val icon = docInfo.getTypeIcon()
@@ -97,6 +120,17 @@ class OptionPdfBottomSheet(
             listener.onShare(docInfo)
             dismiss()
         }
+    }
+
+    private fun checkPdfHavePassword(filePath: String): Boolean {
+        return when (checkPdfByPath(filePath)) {
+            PdfCheckResult.OK -> false
+
+            PdfCheckResult.PASSWORD_PROTECTED -> true
+
+            PdfCheckResult.INVALID_PDF -> false
+        }
+
     }
 
     override fun onDestroyView() {

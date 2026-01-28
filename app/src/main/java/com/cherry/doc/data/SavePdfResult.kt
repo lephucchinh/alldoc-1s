@@ -4,7 +4,7 @@ import android.net.Uri
 
 sealed class SavePdfResult {
     data class Success(
-        val uri: Uri,
+        val uri: Uri?,
         val path: String,
     ) : SavePdfResult()
 

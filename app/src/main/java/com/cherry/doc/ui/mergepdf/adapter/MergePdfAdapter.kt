@@ -17,18 +17,14 @@ class MergePdfAdapter(
     private val items = mutableListOf<MergePdfItem>()
     private var mode: MergeMode = MergeMode.SELECT
 
+    // ===== PUBLIC API =====
+
+    fun isMergeMode(): Boolean = mode == MergeMode.MERGE
 
     fun showAll(docs: List<DocInfo>) {
         mode = MergeMode.SELECT
         items.clear()
-        items.addAll(
-            docs.map {
-                MergePdfItem(
-                    doc = it,
-                    isSelected = false
-                )
-            }
-        )
+        items.addAll(docs.map { MergePdfItem(it, false) })
         notifyDataSetChanged()
         notifySelection()
     }
@@ -43,6 +39,16 @@ class MergePdfAdapter(
     fun getSelected(): List<DocInfo> =
         items.filter { it.isSelected }.map { it.doc }
 
+    // ===== DRAG SUPPORT =====
+
+    fun onItemMove(from: Int, to: Int) {
+        if (from == to) return
+        val item = items.removeAt(from)
+        items.add(to, item)
+        notifyItemMoved(from, to)
+    }
+
+    // ===== ADAPTER =====
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileViewHolder {
         val binding = ItemMergePdfBinding.inflate(
@@ -59,6 +65,7 @@ class MergePdfAdapter(
 
     override fun getItemCount(): Int = items.size
 
+    // ===== VIEW HOLDER =====
 
     inner class FileViewHolder(
         private val binding: ItemMergePdfBinding,
@@ -86,6 +93,7 @@ class MergePdfAdapter(
                 }
             )
 
+            // click root (SELECT mode)
             binding.root.setOnClickListener {
                 if (mode == MergeMode.SELECT) {
                     item.isSelected = !item.isSelected
@@ -94,11 +102,12 @@ class MergePdfAdapter(
                 }
             }
 
+            // click icon
             binding.imgSelect.setSingleClickListener {
-                if (mode == MergeMode.MERGE) {
+                val pos = position
+                if (pos == RecyclerView.NO_POSITION) return@setSingleClickListener
 
-                    val pos = position
-                    if (pos == RecyclerView.NO_POSITION) return@setSingleClickListener
+                if (mode == MergeMode.MERGE) {
                     if (items.size <= 2) {
                         Toast.makeText(
                             itemView.context,
@@ -111,10 +120,9 @@ class MergePdfAdapter(
                     notifyItemRemoved(pos)
                     notifyItemRangeChanged(pos, items.size - pos)
                     notifySelection()
-                }
-                else if (mode == MergeMode.SELECT) {
+                } else {
                     item.isSelected = !item.isSelected
-                    notifyItemChanged(position)
+                    notifyItemChanged(pos)
                     notifySelection()
                 }
             }

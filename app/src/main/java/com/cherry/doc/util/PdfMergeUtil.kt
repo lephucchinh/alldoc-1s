@@ -6,6 +6,7 @@ import android.provider.MediaStore
 import com.cherry.doc.data.PdfSource
 import com.cherry.doc.data.SavePdfResult
 import com.tom_roush.pdfbox.io.MemoryUsageSetting
+import com.tom_roush.pdfbox.multipdf.PDFMergerUtility
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import java.io.File
 
@@ -20,6 +21,15 @@ object PdfMergeUtil {
 
         if (files.size < 2) {
             return SavePdfResult.Error("Need at least 2 PDF files")
+        }
+
+        // 🔎 CHECK PASSWORD TRƯỚC
+        files.forEach { file ->
+            if (isPdfPasswordProtected(file)) {
+                return SavePdfResult.Error(
+                    "Some PDF files are password-protected. Please remove the password before merging."
+                )
+            }
         }
 
         val resolver = context.contentResolver
@@ -41,29 +51,23 @@ object PdfMergeUtil {
             values
         ) ?: return SavePdfResult.Error("Cannot create output pdf")
 
-        var merged: PDDocument? = null
-
         return try {
-            merged = PDDocument()
-
-            files.forEach { file ->
-                val doc = PDDocument.load(file)
-                doc.pages.forEach { page ->
-                    merged.addPage(page)
-                }
-                doc.close()
-            }
+            val merger = PDFMergerUtility()
 
             resolver.openOutputStream(uri)?.use { output ->
-                merged.save(output)
+                merger.destinationStream = output
+
+                files.forEach { file ->
+                    merger.addSource(file)
+                }
+
+                merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly())
             } ?: throw IllegalStateException("Cannot open output stream")
 
-            // ✅ đánh dấu ghi xong
             values.clear()
             values.put(MediaStore.MediaColumns.IS_PENDING, 0)
             resolver.update(uri, values, null, null)
 
-            // 👉 build path thật (đúng như các hàm trước của bạn)
             val realPath = File(
                 Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_DOCUMENTS
@@ -79,9 +83,21 @@ object PdfMergeUtil {
         } catch (e: Exception) {
             e.printStackTrace()
             resolver.delete(uri, null, null)
-            SavePdfResult.Error(e.message ?: "Merge pdf failed")
-        } finally {
-            merged?.close()
+            SavePdfResult.Error(
+                e.message ?: "Merge pdf failed"
+            )
+        }
+    }
+
+    fun isPdfPasswordProtected(file: File): Boolean {
+        if (!file.exists() || file.length() < 10) return false
+
+        return try {
+            PDDocument.load(file).use {
+                false // load được → không password
+            }
+        } catch (e: Exception) {
+            true // load fail → có thể là password
         }
     }
 

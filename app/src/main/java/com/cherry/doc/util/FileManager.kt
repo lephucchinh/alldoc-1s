@@ -10,11 +10,13 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import com.cherry.doc.data.PdfCheckResult
 import com.cherry.doc.data.SaveImagesResult
 import com.cherry.doc.data.SavePdfResult
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException
 import java.io.File
+import java.io.FileInputStream
 import kotlin.math.min
 
 object FileManager {
@@ -103,6 +105,48 @@ object FileManager {
             }
         }
     }
+
+    fun removePdfPasswordByPath(
+        context: Context,
+        path: String,
+        password: String
+    ): SavePdfResult {
+
+        val inputFile = File(path)
+        if (!inputFile.exists() || inputFile.length() < 10) {
+            return SavePdfResult.Error("Invalid PDF file")
+        }
+
+        // output file (ghi đè tên cũ hoặc tạo file mới tuỳ bạn)
+        val outputFile = File(
+            inputFile.parentFile,
+            inputFile.nameWithoutExtension + "_unlocked.pdf"
+        )
+
+        return try {
+            PDDocument.load(inputFile, password).use { document ->
+                // 🔥 DÒNG QUAN TRỌNG NHẤT
+                document.isAllSecurityToBeRemoved = true
+
+                document.save(outputFile)
+            }
+
+            SavePdfResult.Success(
+                uri = null,
+                path = outputFile.absolutePath
+            )
+
+        } catch (e: com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException) {
+            SavePdfResult.Error("Incorrect password")
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            SavePdfResult.Error(
+                e.message ?: "Failed to remove PDF password"
+            )
+        }
+    }
+
 
     private fun unlockInternal(
         context: Context,
@@ -432,6 +476,35 @@ object FileManager {
             "$subFolder/$fileName"
         ).absolutePath
     }
+
+    fun checkPdfByPath(path: String): PdfCheckResult {
+        val file = File(path)
+        if (!file.exists() || file.length() < 10) {
+            return PdfCheckResult.INVALID_PDF
+        }
+
+        // check header %PDF-
+        try {
+            FileInputStream(file).use { fis ->
+                val header = ByteArray(5)
+                if (fis.read(header) != 5) return PdfCheckResult.INVALID_PDF
+                if (String(header) != "%PDF-") return PdfCheckResult.INVALID_PDF
+            }
+        } catch (e: Exception) {
+            return PdfCheckResult.INVALID_PDF
+        }
+
+        return try {
+            PDDocument.load(file).use {
+                PdfCheckResult.OK
+            }
+        } catch (e: com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException) {
+            PdfCheckResult.PASSWORD_PROTECTED
+        } catch (e: Exception) {
+            PdfCheckResult.INVALID_PDF
+        }
+    }
+
 
 
 }

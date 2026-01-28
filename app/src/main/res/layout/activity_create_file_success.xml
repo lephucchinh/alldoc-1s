@@ -54,12 +54,11 @@
                 android:id="@+id/cvFile"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_70sdp"
-                android:layout_marginTop="@dimen/_10sdp"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="@dimen/_6sdp"
                 app:cardElevation="0dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtTitle">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/imgFile"

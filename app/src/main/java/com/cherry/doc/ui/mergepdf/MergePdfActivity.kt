@@ -5,14 +5,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
+import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
 import com.cherry.doc.data.SavePdfResult
 import com.cherry.doc.databinding.ActivityMergePdfBinding
 import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.repository.FilesHelper.loadAllFiles
 import com.cherry.doc.ui.createdsuccess.PdfFileCreateSuccessActivity
+import com.cherry.doc.ui.mergepdf.adapter.MergeDragCallback
 import com.cherry.doc.ui.mergepdf.adapter.MergePdfAdapter
 import com.cherry.doc.util.PdfMergeUtil.mergePdfFilesToExternal
+import com.cherry.doc.util.hideSystemBars
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,6 +33,7 @@ class MergePdfActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMergePdfBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        hideSystemBars()
         initView()
         registerListener()
     }
@@ -41,12 +46,16 @@ class MergePdfActivity : AppCompatActivity() {
         }
         mergePdfAdapter.showAll(FilesHelper.allFiles.value.flatMap { it.docList.orEmpty() })
         binding.rcvFiles.adapter = mergePdfAdapter
+        val touchHelper = ItemTouchHelper(
+            MergeDragCallback(mergePdfAdapter)
+        )
+        touchHelper.attachToRecyclerView(binding.rcvFiles)
 
     }
 
     private fun registerListener() {
         binding.btnMergePdf.setOnClickListener {
-            binding.icAds.isVisible = isMergeEnabled
+
             if (isMergeEnabled.not()) {
                 if (selectedFiles.size < 2) {
                     Toast.makeText(this, "Select at least 2 PDFs", Toast.LENGTH_SHORT).show()
@@ -54,11 +63,11 @@ class MergePdfActivity : AppCompatActivity() {
                 }
                 isMergeEnabled = true
                 mergePdfAdapter.showMergeList(selectedFiles)
+                binding.icAds.isVisible = isMergeEnabled
+                binding.txtMerge.setText(if (isMergeEnabled) R.string.text_button_merge_file else R.string.text_button_import)
             } else {
                 mergePdf()
-
             }
-
         }
     }
 

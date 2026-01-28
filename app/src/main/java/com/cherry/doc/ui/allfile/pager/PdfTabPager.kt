@@ -17,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
 import com.cherry.doc.data.DocInfo
+import com.cherry.doc.data.PdfCheckResult
 import com.cherry.doc.databinding.PageAllFileBinding
 import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.ui.allfile.AllFileViewModel
@@ -30,6 +31,7 @@ import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION11
+import com.cherry.doc.util.FileManager.checkPdfByPath
 import com.cherry.doc.util.FileManager.isPdfEncrypted
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
@@ -86,6 +88,7 @@ class PdfTabPager : Fragment() {
                     openDoc(path, DocSourceType.PATH)
                 }
             }
+
             override fun onShare(item: DocInfo) {
                 item.path?.let { requireContext().shareFile(it) }
             }
@@ -164,7 +167,11 @@ class PdfTabPager : Fragment() {
                 }
 
                 override fun onLockPdf(doc: DocInfo) {
-                    showDialogLockPdf(doc)
+                    if (checkPdfHavePassword(doc.path ?: "")) {
+
+                    } else {
+                        showDialogLockPdf(doc)
+                    }
                 }
 
                 override fun onDelete(doc: DocInfo) {
@@ -176,6 +183,17 @@ class PdfTabPager : Fragment() {
                 }
             }
         ).show(parentFragmentManager, "OptionPdfBottomSheet")
+    }
+
+    private fun checkPdfHavePassword(filePath: String): Boolean {
+        return when (checkPdfByPath(filePath)) {
+            PdfCheckResult.OK -> false
+
+            PdfCheckResult.PASSWORD_PROTECTED -> true
+
+            PdfCheckResult.INVALID_PDF -> false
+        }
+
     }
 
 
@@ -219,7 +237,8 @@ class PdfTabPager : Fragment() {
             RESULT_KEY_PASSWORD_PDF,
             viewLifecycleOwner
         ) { _, bundle ->
-            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT) ?: return@setFragmentResultListener
+            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
+                ?: return@setFragmentResultListener
             unlockAndOpenPdf(file, password)
         }
     }
