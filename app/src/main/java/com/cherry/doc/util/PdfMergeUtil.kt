@@ -3,8 +3,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.os.Environment
 import android.provider.MediaStore
-import com.cherry.doc.data.PdfSource
-import com.cherry.doc.data.SavePdfResult
+import com.cherry.doc.data.model.SavePdfResult
 import com.tom_roush.pdfbox.io.MemoryUsageSetting
 import com.tom_roush.pdfbox.multipdf.PDFMergerUtility
 import com.tom_roush.pdfbox.pdmodel.PDDocument

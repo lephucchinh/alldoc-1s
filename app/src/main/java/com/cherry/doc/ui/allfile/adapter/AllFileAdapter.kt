@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.cherry.doc.data.DocInfo
+import com.cherry.doc.data.model.DocInfo
 import com.cherry.doc.databinding.ItemFileBinding
 import com.cherry.doc.util.formatDateTime
 import com.cherry.doc.util.setSingleClickListener
 import com.cherry.lib.doc.R
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class AllFileAdapter(
     private val listener: Listener? = null,

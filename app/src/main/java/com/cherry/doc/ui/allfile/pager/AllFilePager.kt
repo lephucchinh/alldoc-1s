@@ -16,8 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
-import com.cherry.doc.data.DocInfo
-import com.cherry.doc.data.PdfCheckResult
+import com.cherry.doc.data.model.DocInfo
+import com.cherry.doc.data.model.PdfCheckResult
 import com.cherry.doc.databinding.PageAllFileBinding
 import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.ui.allfile.AllFileViewModel

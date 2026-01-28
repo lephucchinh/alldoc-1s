@@ -1,4 +1,4 @@
-package com.cherry.doc.data
+package com.cherry.doc.data.model
 
 /*
  * -----------------------------------------------------------------

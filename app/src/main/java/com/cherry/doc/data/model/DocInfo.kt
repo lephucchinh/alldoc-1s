@@ -1,7 +1,6 @@
-package com.cherry.doc.data
+package com.cherry.doc.data.model
 
 import android.os.Parcelable
-import com.cherry.doc.R
 import kotlinx.parcelize.Parcelize
 import java.io.File
 

@@ -4,8 +4,8 @@ import android.content.Context
 import android.provider.MediaStore
 import android.util.Log
 import android.webkit.MimeTypeMap
-import com.cherry.doc.data.DocGroupInfo
-import com.cherry.doc.data.DocInfo
+import com.cherry.doc.data.model.DocGroupInfo
+import com.cherry.doc.data.model.DocInfo
 import com.cherry.lib.doc.bean.FileType
 import com.cherry.lib.doc.util.FileUtils
 import java.math.BigDecimal

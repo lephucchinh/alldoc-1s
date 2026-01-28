@@ -12,11 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
-import com.cherry.doc.data.DocInfo
-import com.cherry.doc.data.SaveImagesResult
-import com.cherry.doc.data.SavePdfResult
+import com.cherry.doc.data.model.SaveImagesResult
+import com.cherry.doc.data.model.SavePdfResult
 import com.cherry.doc.databinding.ActivityHomeBinding
-import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.repository.FilesHelper.loadAllFiles
 import com.cherry.doc.ui.allfile.AllFileFragment
 import com.cherry.doc.ui.createdsuccess.PdfFileCreateSuccessActivity
@@ -33,7 +31,6 @@ import com.cherry.doc.util.FileManager.saveImagesToExternal
 import com.cherry.doc.util.hideSystemBars
 import com.cherry.doc.util.setSingleClickListener
 import gun0912.tedimagepicker.builder.TedImagePicker
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

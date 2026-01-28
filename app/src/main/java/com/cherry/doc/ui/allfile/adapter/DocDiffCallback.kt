@@ -1,7 +1,7 @@
 package com.cherry.doc.ui.allfile.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.cherry.doc.data.DocInfo
+import com.cherry.doc.data.model.DocInfo
 
 object DocDiffCallback : DiffUtil.ItemCallback<DocInfo>() {
 

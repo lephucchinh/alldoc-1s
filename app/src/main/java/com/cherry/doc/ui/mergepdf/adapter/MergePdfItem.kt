@@ -1,6 +1,6 @@
 package com.cherry.doc.ui.mergepdf.adapter
 
-import com.cherry.doc.data.DocInfo
+import com.cherry.doc.data.model.DocInfo
 
 data class MergePdfItem(
     val doc: DocInfo,

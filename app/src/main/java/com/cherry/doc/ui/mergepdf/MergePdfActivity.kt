@@ -7,8 +7,8 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.cherry.doc.R
-import com.cherry.doc.data.DocInfo
-import com.cherry.doc.data.SavePdfResult
+import com.cherry.doc.data.model.DocInfo
+import com.cherry.doc.data.model.SavePdfResult
 import com.cherry.doc.databinding.ActivityMergePdfBinding
 import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.repository.FilesHelper.loadAllFiles

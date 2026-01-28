@@ -3,7 +3,6 @@ package com.cherry.doc.ui.createdsuccess
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -11,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
-import com.cherry.doc.data.DocInfo
+import com.cherry.doc.data.model.DocInfo
 import com.cherry.doc.databinding.ActivityCreateFileSuccessBinding
 import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment

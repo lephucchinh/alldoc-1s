@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.cherry.doc.R
-import com.cherry.doc.data.DocInfo
-import com.cherry.doc.data.PdfCheckResult
+import com.cherry.doc.data.model.DocInfo
+import com.cherry.doc.data.model.PdfCheckResult
 import com.cherry.doc.databinding.BottomSheetOptionBinding
 import com.cherry.doc.util.FileManager.checkPdfByPath
 import com.cherry.doc.util.formatDateTime
@@ -79,6 +79,8 @@ class OptionPdfBottomSheet(
 
         // icon
         btnLockPdf.isVisible = (docInfo.getFileType() == "PDF")
+        btnMergePdf.isVisible = (docInfo.getFileType() == "PDF")
+        btnSplitPdf.isVisible = (docInfo.getFileType() == "PDF")
         val icon = docInfo.getTypeIcon()
         if (icon != -1) imgFile.setImageResource(icon)
 

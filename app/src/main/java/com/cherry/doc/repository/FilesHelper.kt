@@ -1,8 +1,8 @@
 package com.cherry.doc.repository
 
 import com.cherry.doc.App
-import com.cherry.doc.data.DocGroupInfo
-import com.cherry.doc.data.DocInfo
+import com.cherry.doc.data.model.DocGroupInfo
+import com.cherry.doc.data.model.DocInfo
 import com.cherry.doc.util.DocUtil
 import com.cherry.doc.util.FileManager.deleteFileSmart
 import kotlinx.coroutines.Dispatchers

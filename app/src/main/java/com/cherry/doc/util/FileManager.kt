@@ -12,9 +12,9 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import com.cherry.doc.data.PdfCheckResult
-import com.cherry.doc.data.SaveImagesResult
-import com.cherry.doc.data.SavePdfResult
+import com.cherry.doc.data.model.PdfCheckResult
+import com.cherry.doc.data.model.SaveImagesResult
+import com.cherry.doc.data.model.SavePdfResult
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException
 import java.io.File
