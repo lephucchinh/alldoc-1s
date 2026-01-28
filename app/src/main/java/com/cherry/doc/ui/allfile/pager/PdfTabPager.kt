@@ -25,6 +25,8 @@ import com.cherry.doc.ui.allfile.adapter.AllFileAdapter
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_PDF
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PDF
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_UNLOCK_ALL_FILE
+import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_UNLOCK_PDF
 import com.cherry.doc.ui.widgets.DialogFragmentDelete
 import com.cherry.doc.ui.widgets.DialogSetPasswordFragment
 import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
@@ -33,6 +35,7 @@ import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION11
 import com.cherry.doc.util.FileManager.checkPdfByPath
 import com.cherry.doc.util.FileManager.isPdfEncrypted
+import com.cherry.doc.util.FileManager.removePdfPasswordByPath
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
 import com.cherry.doc.util.lockPdf
@@ -168,7 +171,7 @@ class PdfTabPager : Fragment() {
 
                 override fun onLockPdf(doc: DocInfo) {
                     if (checkPdfHavePassword(doc.path ?: "")) {
-
+                        showUnLockPasswordDialog(doc)
                     } else {
                         showDialogLockPdf(doc)
                     }
@@ -194,6 +197,27 @@ class PdfTabPager : Fragment() {
             PdfCheckResult.INVALID_PDF -> false
         }
 
+    }
+
+    private fun showUnLockPasswordDialog(doc: DocInfo) {
+        val file = File(doc.path ?: return)
+
+        Dialog1EditTextFragment.newInstance(
+            title = getString(R.string.text_enter_password),
+            defaultText = "",
+            positiveText = getString(R.string.text_okay),
+            negativeText = getString(R.string.text_cancel),
+            resultKey = RESULT_KEY_UNLOCK_PDF
+        ).show(parentFragmentManager, RESULT_KEY_UNLOCK_PDF)
+
+        parentFragmentManager.setFragmentResultListener(
+            RESULT_KEY_UNLOCK_PDF,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
+                ?: return@setFragmentResultListener
+            removePdfPasswordByPath(requireContext(), file.path, password)
+        }
     }
 
 

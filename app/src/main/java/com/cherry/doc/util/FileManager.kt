@@ -10,6 +10,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
 import com.cherry.doc.data.PdfCheckResult
 import com.cherry.doc.data.SaveImagesResult
 import com.cherry.doc.data.SavePdfResult
@@ -112,40 +114,72 @@ object FileManager {
         password: String
     ): SavePdfResult {
 
+        val TAG = "RemovePdfPassword"
+
         val inputFile = File(path)
         if (!inputFile.exists() || inputFile.length() < 10) {
+            Log.e(TAG, "Invalid PDF file: $path")
+            Toast.makeText(context, "Invalid PDF file", Toast.LENGTH_SHORT).show()
             return SavePdfResult.Error("Invalid PDF file")
         }
 
-        // output file (ghi đè tên cũ hoặc tạo file mới tuỳ bạn)
-        val outputFile = File(
-            inputFile.parentFile,
-            inputFile.nameWithoutExtension + "_unlocked.pdf"
+        // 1️⃣ file tạm (cache)
+        val tempFile = File.createTempFile(
+            "unlock_",
+            ".pdf",
+            context.cacheDir
         )
 
         return try {
+            // 2️⃣ load + remove security → save temp
             PDDocument.load(inputFile, password).use { document ->
-                // 🔥 DÒNG QUAN TRỌNG NHẤT
                 document.isAllSecurityToBeRemoved = true
-
-                document.save(outputFile)
+                document.save(tempFile)
             }
+
+            // 3️⃣ VERIFY: mở lại KHÔNG password
+            try {
+                PDDocument.load(tempFile).use { }
+            } catch (e: Exception) {
+                throw IllegalStateException("Unlock verification failed")
+            }
+
+            // 4️⃣ xoá file gốc
+            if (!inputFile.delete()) {
+                throw IllegalStateException("Cannot delete original PDF")
+            }
+
+            // 5️⃣ ghi đè file mới
+            if (!tempFile.copyTo(inputFile, overwrite = true).exists()) {
+                throw IllegalStateException("Failed to overwrite PDF")
+            }
+
+            Log.d(TAG, "PDF password removed and replaced: ${inputFile.absolutePath}")
+            Toast.makeText(context, "PDF unlocked successfully", Toast.LENGTH_SHORT).show()
 
             SavePdfResult.Success(
                 uri = null,
-                path = outputFile.absolutePath
+                path = inputFile.absolutePath
             )
 
         } catch (e: com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException) {
+            Log.e(TAG, "Incorrect password", e)
+            Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show()
             SavePdfResult.Error("Incorrect password")
 
         } catch (e: Exception) {
-            e.printStackTrace()
+            Log.e(TAG, "Failed to remove PDF password", e)
+            Toast.makeText(context, "Failed to unlock PDF", Toast.LENGTH_SHORT).show()
             SavePdfResult.Error(
                 e.message ?: "Failed to remove PDF password"
             )
+
+        } finally {
+            // dọn file tạm nếu còn
+            if (tempFile.exists()) tempFile.delete()
         }
     }
+
 
 
     private fun unlockInternal(

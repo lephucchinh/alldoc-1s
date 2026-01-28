@@ -141,7 +141,9 @@ class AllFilePager : Fragment() {
         }
     }
 
-    private fun showUnLockPasswordDialog(file: File) {
+    private fun showUnLockPasswordDialog(doc: DocInfo) {
+        val file = File(doc.path ?: return)
+
         Dialog1EditTextFragment.newInstance(
             title = getString(R.string.text_enter_password),
             defaultText = "",
@@ -207,7 +209,7 @@ class AllFilePager : Fragment() {
 
                 override fun onLockPdf(doc: DocInfo) {
                     if(checkPdfHavePassword(doc.path ?: "")) {
-
+                        showUnLockPasswordDialog(doc)
                     } else {
                         showDialogLockPdf(doc)
                     }
