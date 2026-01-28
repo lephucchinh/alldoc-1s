@@ -86,7 +86,7 @@
             android:fontFamily="@font/poppins_bold"
             android:gravity="center"
             android:includeFontPadding="false"
-            android:padding="@dimen/_15sdp"
+            android:padding="@dimen/_10sdp"
             android:text="IMPORT"
             android:textColor="@color/white"
             android:textSize="@dimen/_16sdp"
@@ -96,6 +96,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/icAds"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_ad"

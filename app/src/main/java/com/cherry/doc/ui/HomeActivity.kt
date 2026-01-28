@@ -1,5 +1,6 @@
 package com.cherry.doc.ui
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,7 @@ import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.repository.FilesHelper.loadAllFiles
 import com.cherry.doc.ui.allfile.AllFileFragment
 import com.cherry.doc.ui.createdsuccess.PdfFileCreateSuccessActivity
+import com.cherry.doc.ui.mergepdf.MergePdfActivity
 import com.cherry.doc.ui.widgets.BottomSheetCreateFile
 import com.cherry.doc.ui.widgets.DialogFragmentCreatePdf
 import com.cherry.doc.ui.widgets.DialogLoading
@@ -37,6 +39,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.jvm.java
 
 
 class HomeActivity : AppCompatActivity() {
@@ -320,7 +323,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
             override fun onMergePdf() {
-                // merge pdf
+                openMergePdf()
             }
 
             override fun onCreatePdf() {
@@ -328,6 +331,10 @@ class HomeActivity : AppCompatActivity() {
             }
         }).show(supportFragmentManager, "BottomSheetCreateFile")
 
+    }
+
+    private fun openMergePdf() {
+        startActivity(Intent(this, MergePdfActivity::class.java))
     }
 
     private fun setNormalMultiButton() {

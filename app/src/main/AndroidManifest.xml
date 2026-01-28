@@ -6,8 +6,7 @@
 
     <!-- storage permission start -->
 
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
@@ -18,10 +17,10 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_config"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.DocViewer"
         tools:targetApi="31">
@@ -33,6 +32,10 @@
             android:exported="false" />
         <activity
             android:name=".ui.createdsuccess.PdfFileCreateSuccessActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.mergepdf.MergePdfActivity"
             android:exported="false" />
 
         <activity

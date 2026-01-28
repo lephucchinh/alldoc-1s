@@ -20,8 +20,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvFile"
-        android:layout_width="@dimen/_60sdp"
-        android:layout_height="@dimen/_72sdp"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_50sdp"
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_10sdp"
         app:cardBackgroundColor="@color/white"
@@ -42,13 +42,14 @@
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="wrap_content"
-
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:fontFamily="@font/poppins_bold"
-        android:textColor="#3B385E"
-        android:textSize="@dimen/_13sdp"
+        android:maxWidth="@dimen/_160sdp"
+        android:maxLines="1"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_12sdp"
         app:layout_constraintStart_toEndOf="@+id/cvFile"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Welcome All Document" />
@@ -60,10 +61,10 @@
         android:background="@drawable/bg_type"
         android:fontFamily="@font/poppins_regular"
         android:includeFontPadding="false"
-        android:paddingHorizontal="@dimen/_6sdp"
-        android:paddingVertical="@dimen/_3sdp"
+        android:paddingHorizontal="@dimen/_4sdp"
+        android:paddingVertical="@dimen/_2sdp"
         android:textColor="#DE231B"
-        android:textSize="@dimen/_12sdp"
+        android:textSize="@dimen/_10sdp"
         app:layout_constraintStart_toStartOf="@+id/txtTitle"
         app:layout_constraintTop_toBottomOf="@+id/txtTitle"
         tools:text="PDF" />
@@ -76,15 +77,15 @@
         android:includeFontPadding="false"
         android:text="184 KB  ·  Aug 01, 2020"
         android:textColor="#3B385E"
-        android:textSize="@dimen/_11sdp"
+        android:textSize="@dimen/_10sdp"
         app:layout_constraintBottom_toBottomOf="@+id/txtType"
         app:layout_constraintStart_toEndOf="@+id/txtType"
         app:layout_constraintTop_toTopOf="@+id/txtType" />
 
     <ImageView
         android:id="@+id/imgSelect"
-        android:layout_width="@dimen/_20sdp"
-        android:layout_height="@dimen/_20sdp"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="@dimen/_16sdp"
         android:src="@drawable/ic_unselect"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
