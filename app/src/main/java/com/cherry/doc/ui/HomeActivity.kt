@@ -18,6 +18,7 @@ import com.cherry.doc.databinding.ActivityHomeBinding
 import com.cherry.doc.repository.FilesHelper.loadAllFiles
 import com.cherry.doc.ui.allfile.AllFileFragment
 import com.cherry.doc.ui.createdsuccess.PdfFileCreateSuccessActivity
+import com.cherry.doc.ui.favourite.FavouriteFragment
 import com.cherry.doc.ui.mergepdf.MergePdfActivity
 import com.cherry.doc.ui.widgets.BottomSheetCreateFile
 import com.cherry.doc.ui.widgets.DialogFragmentCreatePdf
@@ -96,10 +97,8 @@ class HomeActivity : AppCompatActivity() {
         // Nếu đã restore (rotation / process death) thì lấy lại fragment cũ
         val all = fm.findFragmentByTag(TAG_ALL) ?: AllFileFragment()
 
-        /*Test Tạm */
-        /*TODO*/
         val recent = fm.findFragmentByTag(TAG_RECENT) ?: AllFileFragment()
-        val fav = fm.findFragmentByTag(TAG_FAV) ?: AllFileFragment()
+        val fav = fm.findFragmentByTag(TAG_FAV) ?: FavouriteFragment()
         val tools = fm.findFragmentByTag(TAG_TOOLS) ?: AllFileFragment()
 
         fm.beginTransaction()

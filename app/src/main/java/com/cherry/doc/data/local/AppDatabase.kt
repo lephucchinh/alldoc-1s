@@ -4,35 +4,38 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.cherry.doc.data.local.dao.DocScanDao
-import com.cherry.doc.data.local.entity.DocScanEntity
+import com.cherry.doc.App
+import com.cherry.doc.data.local.dao.DocFavouriteDao
+import com.cherry.doc.data.local.dao.DocHistoryDao
+import com.cherry.doc.data.local.entity.DocFavouriteEntity
+import com.cherry.doc.data.local.entity.DocHistoryEntity
 
 @Database(
-    entities = [DocScanEntity::class],
+    entities = [
+        DocFavouriteEntity::class,
+        DocHistoryEntity::class
+    ],
     version = 1,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
-    abstract fun docScanDao(): DocScanDao
+    abstract fun docFavouriteDao(): DocFavouriteDao
+    abstract fun docHistoryDao(): DocHistoryDao
 
-    class Singleton private constructor(context: Context) {
+    companion object {
 
-        val database: AppDatabase = Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java,
-            "app_database.db"
-        ).build()
+        @Volatile
+        private var INSTANCE: AppDatabase? = null
 
-        companion object {
-            @Volatile
-            private var INSTANCE: Singleton? = null
-
-            fun getInstance(context: Context): Singleton {
-                return INSTANCE ?: synchronized(this) {
-                    INSTANCE ?: Singleton(context).also {
-                        INSTANCE = it
-                    }
+        fun getInstance(): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
+                INSTANCE ?: Room.databaseBuilder(
+                    App.instance.applicationContext,
+                    AppDatabase::class.java,
+                    "app_database.db"
+                ).build().also {
+                    INSTANCE = it
                 }
             }
         }

@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
+import com.cherry.doc.data.local.AppDatabase
 import com.cherry.doc.data.model.DocInfo
 import com.cherry.doc.data.model.PdfCheckResult
 import com.cherry.doc.databinding.BottomSheetOptionBinding
@@ -14,6 +16,7 @@ import com.cherry.doc.util.FileManager.checkPdfByPath
 import com.cherry.doc.util.formatDateTime
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.launch
 
 class OptionPdfBottomSheet(
     private val docInfo: DocInfo,
@@ -76,7 +79,12 @@ class OptionPdfBottomSheet(
                 0
             )
         }
-
+        viewLifecycleOwner.lifecycleScope.launch {
+            docInfo.path?.let {
+                btnAddFavourite.isVisible =
+                    AppDatabase.getInstance().docFavouriteDao().isFavourite(it).not()
+            }
+        }
         // icon
         btnLockPdf.isVisible = (docInfo.getFileType() == "PDF")
         btnMergePdf.isVisible = (docInfo.getFileType() == "PDF")

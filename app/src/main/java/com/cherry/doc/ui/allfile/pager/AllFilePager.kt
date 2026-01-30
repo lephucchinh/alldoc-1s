@@ -16,6 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.cherry.doc.R
+import com.cherry.doc.data.local.AppDatabase
+import com.cherry.doc.data.local.entity.DocFavouriteEntity
 import com.cherry.doc.data.model.DocInfo
 import com.cherry.doc.data.model.PdfCheckResult
 import com.cherry.doc.databinding.PageAllFileBinding
@@ -136,7 +138,8 @@ class AllFilePager : Fragment() {
             RESULT_KEY_PASSWORD_ALL_FILE,
             viewLifecycleOwner
         ) { _, bundle ->
-            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT) ?: return@setFragmentResultListener
+            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
+                ?: return@setFragmentResultListener
             unlockAndOpenPdf(file, password)
         }
     }
@@ -156,8 +159,9 @@ class AllFilePager : Fragment() {
             RESULT_KEY_UNLOCK_ALL_FILE,
             viewLifecycleOwner
         ) { _, bundle ->
-            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT) ?: return@setFragmentResultListener
-            removePdfPasswordByPath(requireContext(),file.path, password)
+            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
+                ?: return@setFragmentResultListener
+            removePdfPasswordByPath(requireContext(), file.path, password)
         }
     }
 
@@ -196,7 +200,13 @@ class AllFilePager : Fragment() {
             listener = object : OptionPdfBottomSheet.Listener {
 
                 override fun onAddFavourite(doc: DocInfo) {
-                    // TODO: save favourite
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        doc.path?.let {
+                            AppDatabase.getInstance().docFavouriteDao()
+                                .insert(DocFavouriteEntity(it))
+                            FilesHelper.addFavouriteByPath(it)
+                        }
+                    }
                 }
 
                 override fun onMergePdf(doc: DocInfo) {
@@ -208,7 +218,7 @@ class AllFilePager : Fragment() {
                 }
 
                 override fun onLockPdf(doc: DocInfo) {
-                    if(checkPdfHavePassword(doc.path ?: "")) {
+                    if (checkPdfHavePassword(doc.path ?: "")) {
                         showUnLockPasswordDialog(doc)
                     } else {
                         showDialogLockPdf(doc)
@@ -385,7 +395,7 @@ class AllFilePager : Fragment() {
             intent.addCategory("android.intent.category.DEFAULT")
             intent.data =
                 Uri.parse(java.lang.String.format("package:%s", requireActivity().packageName))
-            startActivityForResult(intent,REQUEST_CODE_STORAGE_PERMISSION11)
+            startActivityForResult(intent, REQUEST_CODE_STORAGE_PERMISSION11)
         } catch (e: Exception) {
             val intent = Intent()
             intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION

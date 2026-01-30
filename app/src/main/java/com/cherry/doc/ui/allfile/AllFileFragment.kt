@@ -130,7 +130,6 @@ class AllFileFragment : Fragment() {
             )
 
 
-
         // Indicator color
         binding.tabLayout.setSelectedTabIndicatorColor(
             requireContext().getColor(

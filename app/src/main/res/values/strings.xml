@@ -98,4 +98,7 @@
     <string name="text_button_import">IMPORT</string>
     <string name="text_button_merge_file">Merge files</string>
 
+
+    <string name="title_favourite_files">Favourite Files</string>
+
 </resources>

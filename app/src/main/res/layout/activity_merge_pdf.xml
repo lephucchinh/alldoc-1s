@@ -9,7 +9,7 @@
     <View
         android:id="@+id/bgTitle"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_56sdp"
+        android:layout_height="@dimen/_70sdp"
         android:background="#F0F2FF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
