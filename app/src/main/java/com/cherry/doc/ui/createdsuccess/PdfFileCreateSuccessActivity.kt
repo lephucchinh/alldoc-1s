@@ -16,6 +16,7 @@ import com.cherry.doc.repository.FilesHelper
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_ALL_FILE
 import com.cherry.doc.util.FileManager.isPdfEncrypted
+import com.cherry.doc.util.FileManager.openDoc
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
 import com.cherry.doc.util.hideSystemBars
@@ -104,7 +105,7 @@ class PdfFileCreateSuccessActivity : AppCompatActivity() {
         if (file.extension.equals("pdf", true) && isPdfEncrypted(file)) {
             showInputPasswordDialog()
         } else {
-            openDoc(path, DocSourceType.PATH)
+            openDoc(path, DocSourceType.PATH, activity = this)
         }
     }
 
@@ -142,7 +143,11 @@ class PdfFileCreateSuccessActivity : AppCompatActivity() {
 
             launch(Dispatchers.Main) {
                 if (unlocked != null && unlocked.exists()) {
-                    openDoc(unlocked.absolutePath, DocSourceType.PATH)
+                    openDoc(
+                        unlocked.absolutePath,
+                        DocSourceType.PATH,
+                        activity = this@PdfFileCreateSuccessActivity
+                    )
                 } else {
                     Toast.makeText(
                         this@PdfFileCreateSuccessActivity,
@@ -152,19 +157,6 @@ class PdfFileCreateSuccessActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    // --------------------------------------------------------------------
-    // Utils
-    // --------------------------------------------------------------------
-
-    private fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
-        DocViewerActivity.launchDocViewer(
-            this,
-            docSourceType,
-            path,
-            type
-        )
     }
 
     private fun checkSupport(path: String): Boolean {

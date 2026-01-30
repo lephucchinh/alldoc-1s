@@ -32,6 +32,7 @@ import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION11
 import com.cherry.doc.util.FileManager.isPdfEncrypted
+import com.cherry.doc.util.FileManager.openDoc
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
 import com.cherry.doc.util.shareFile
@@ -72,14 +73,6 @@ class ExcelTabPager : Fragment() {
         loadData()
     }
 
-    fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
-        DocViewerActivity.Companion.launchDocViewer(
-            requireActivity(),
-            docSourceType,
-            path,
-            type
-        )
-    }
 
     private fun setupRecyclerView() {
         adapter = AllFileAdapter(listener = object : AllFileAdapter.Listener {
@@ -92,7 +85,7 @@ class ExcelTabPager : Fragment() {
                 if (file.extension.lowercase() == "pdf" && isPdfEncrypted(file)) {
                     showInputPasswordDialog(file)
                 } else {
-                    openDoc(path, DocSourceType.PATH)
+                    openDoc(path, DocSourceType.PATH, activity = requireActivity())
                 }
             }
 
@@ -220,7 +213,8 @@ class ExcelTabPager : Fragment() {
             RESULT_KEY_PASSWORD_EXCEL,
             viewLifecycleOwner
         ) { _, bundle ->
-            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT) ?: return@setFragmentResultListener
+            val password = bundle.getString(Dialog1EditTextFragment.RESULT_TEXT)
+                ?: return@setFragmentResultListener
             unlockAndOpenPdf(file, password)
         }
     }
@@ -231,7 +225,7 @@ class ExcelTabPager : Fragment() {
 
             launch(Dispatchers.Main) {
                 if (unlocked != null && unlocked.exists()) {
-                    openDoc(unlocked.absolutePath, DocSourceType.PATH)
+                    openDoc(unlocked.absolutePath, DocSourceType.PATH, activity = requireActivity())
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -323,7 +317,7 @@ class ExcelTabPager : Fragment() {
             intent.addCategory("android.intent.category.DEFAULT")
             intent.data =
                 Uri.parse(java.lang.String.format("package:%s", requireActivity().packageName))
-            startActivityForResult(intent,REQUEST_CODE_STORAGE_PERMISSION11)
+            startActivityForResult(intent, REQUEST_CODE_STORAGE_PERMISSION11)
         } catch (e: Exception) {
             val intent = Intent()
             intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION

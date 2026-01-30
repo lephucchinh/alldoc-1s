@@ -1,5 +1,6 @@
 package com.cherry.doc.util
 
+import android.app.Activity
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
@@ -12,9 +13,11 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import com.cherry.doc.data.model.PdfCheckResult
 import com.cherry.doc.data.model.SaveImagesResult
 import com.cherry.doc.data.model.SavePdfResult
+import com.cherry.lib.doc.DocViewerActivity
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.encryption.InvalidPasswordException
 import java.io.File
@@ -111,7 +114,7 @@ object FileManager {
     fun removePdfPasswordByPath(
         context: Context,
         path: String,
-        password: String
+        password: String,
     ): SavePdfResult {
 
         val TAG = "RemovePdfPassword"
@@ -179,7 +182,6 @@ object FileManager {
             if (tempFile.exists()) tempFile.delete()
         }
     }
-
 
 
     private fun unlockInternal(
@@ -318,7 +320,7 @@ object FileManager {
         context: Context,
         images: List<Uri>,
         fileName: String,
-        subFolder: String = "MyPDF"
+        subFolder: String = "MyPDF",
     ): SavePdfResult {
 
         if (images.isEmpty()) {
@@ -397,10 +399,9 @@ object FileManager {
     }
 
 
-
     private fun loadBitmapFromUri(
         context: Context,
-        uri: Uri
+        uri: Uri,
     ): Bitmap? {
         return try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -423,7 +424,7 @@ object FileManager {
     private fun scaleBitmapToFit(
         bitmap: Bitmap,
         maxWidth: Int,
-        maxHeight: Int
+        maxHeight: Int,
     ): Bitmap {
         val ratio = min(
             maxWidth.toFloat() / bitmap.width,
@@ -440,7 +441,7 @@ object FileManager {
     fun createEmptyPdfToExternal(
         context: Context,
         fileName: String,
-        subFolder: String = "MyPDF"
+        subFolder: String = "MyPDF",
     ): SavePdfResult {
 
         val resolver = context.contentResolver
@@ -501,7 +502,7 @@ object FileManager {
 
     fun buildExternalFilePath(
         subFolder: String,
-        fileName: String
+        fileName: String,
     ): String {
         return File(
             Environment.getExternalStoragePublicDirectory(
@@ -539,6 +540,14 @@ object FileManager {
         }
     }
 
+    fun openDoc(path: String, docSourceType: Int, type: Int? = null, activity: FragmentActivity) {
+        DocViewerActivity.Companion.launchDocViewer(
+            activity,
+            docSourceType,
+            path,
+            type
+        )
+    }
 
 
 }

@@ -32,6 +32,7 @@ import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION11
 import com.cherry.doc.util.FileManager.isPdfEncrypted
+import com.cherry.doc.util.FileManager.openDoc
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
 import com.cherry.doc.util.shareFile
@@ -83,7 +84,7 @@ class WordTabPager : Fragment() {
                 if (file.extension.lowercase() == "pdf" && isPdfEncrypted(file)) {
                     showInputPasswordDialog(file)
                 } else {
-                    openDoc(path, DocSourceType.PATH)
+                    openDoc(path, DocSourceType.PATH, activity = requireActivity())
                 }
             }
 
@@ -130,7 +131,7 @@ class WordTabPager : Fragment() {
 
             launch(Dispatchers.Main) {
                 if (unlocked != null && unlocked.exists()) {
-                    openDoc(unlocked.absolutePath, DocSourceType.PATH)
+                    openDoc(unlocked.absolutePath, DocSourceType.PATH, activity = requireActivity())
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -274,14 +275,6 @@ class WordTabPager : Fragment() {
         return true
     }
 
-    fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
-        DocViewerActivity.Companion.launchDocViewer(
-            requireActivity(),
-            docSourceType,
-            path,
-            type
-        )
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

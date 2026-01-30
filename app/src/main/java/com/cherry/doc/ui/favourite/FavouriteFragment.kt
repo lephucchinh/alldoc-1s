@@ -22,6 +22,7 @@ import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_FA
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_ALL_FILE
 import com.cherry.doc.ui.widgets.Dialog1EditTextFragment.Companion.RESULT_KEY_PASSWORD_FAVOURITE
 import com.cherry.doc.util.FileManager.isPdfEncrypted
+import com.cherry.doc.util.FileManager.openDoc
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.shareFile
 import com.cherry.lib.doc.DocViewerActivity
@@ -84,7 +85,7 @@ class FavouriteFragment : Fragment() {
                 if (file.extension.lowercase() == "pdf" && isPdfEncrypted(file)) {
                     showInputPasswordDialog(file)
                 } else {
-                    openDoc(path, DocSourceType.PATH)
+                    openDoc(path, DocSourceType.PATH, activity = requireActivity())
                 }
             }
         )
@@ -121,7 +122,7 @@ class FavouriteFragment : Fragment() {
     private fun observeData() {
         FilesHelper.allFilesFavourite.onEach { list ->
             Log.d("chinhhllpp", "observeData: $list")
-            if(list.isEmpty()) {
+            if (list.isEmpty()) {
                 binding.imgNoData.isVisible = true
                 binding.rcvFiles.isVisible = false
             } else {
@@ -132,6 +133,7 @@ class FavouriteFragment : Fragment() {
         }.launchIn(viewLifecycleOwner.lifecycleScope)
 
     }
+
     fun checkSupport(path: String): Boolean {
         var fileType = FileUtils.getFileTypeForUrl(path)
         Log.e(javaClass.simpleName, "fileType = $fileType")
@@ -160,22 +162,13 @@ class FavouriteFragment : Fragment() {
         }
     }
 
-    fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
-        DocViewerActivity.Companion.launchDocViewer(
-            requireActivity(),
-            docSourceType,
-            path,
-            type
-        )
-    }
-
     private fun unlockAndOpenPdf(file: File, password: String) {
         lifecycleScope.launch(Dispatchers.IO) {
             val unlocked = unlockPdfToCache(requireContext(), file, password)
 
             launch(Dispatchers.Main) {
                 if (unlocked != null && unlocked.exists()) {
-                    openDoc(unlocked.absolutePath, DocSourceType.PATH)
+                    openDoc(unlocked.absolutePath, DocSourceType.PATH, activity = requireActivity())
                 } else {
                     Toast.makeText(
                         requireContext(),

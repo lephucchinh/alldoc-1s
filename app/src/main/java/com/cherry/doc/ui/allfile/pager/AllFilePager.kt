@@ -34,8 +34,10 @@ import com.cherry.doc.ui.widgets.OnDeleteConfirmListener
 import com.cherry.doc.ui.widgets.OptionPdfBottomSheet
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION11
+import com.cherry.doc.util.FileManager
 import com.cherry.doc.util.FileManager.checkPdfByPath
 import com.cherry.doc.util.FileManager.isPdfEncrypted
+import com.cherry.doc.util.FileManager.openDoc
 import com.cherry.doc.util.FileManager.removePdfPasswordByPath
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
@@ -92,7 +94,7 @@ class AllFilePager : Fragment() {
                 if (file.extension.lowercase() == "pdf" && isPdfEncrypted(file)) {
                     showInputPasswordDialog(file)
                 } else {
-                    openDoc(path, DocSourceType.PATH)
+                    FileManager.openDoc(path, DocSourceType.PATH,activity = requireActivity())
                 }
             }
 
@@ -171,7 +173,7 @@ class AllFilePager : Fragment() {
 
             launch(Dispatchers.Main) {
                 if (unlocked != null && unlocked.exists()) {
-                    openDoc(unlocked.absolutePath, DocSourceType.PATH)
+                    openDoc(unlocked.absolutePath, DocSourceType.PATH,activity = requireActivity())
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -316,14 +318,6 @@ class AllFilePager : Fragment() {
     }
 
 
-    fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
-        DocViewerActivity.Companion.launchDocViewer(
-            requireActivity(),
-            docSourceType,
-            path,
-            type
-        )
-    }
 
     fun checkSupport(path: String): Boolean {
         var fileType = FileUtils.getFileTypeForUrl(path)

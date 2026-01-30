@@ -36,6 +36,7 @@ import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION
 import com.cherry.doc.util.Const.REQUEST_CODE_STORAGE_PERMISSION11
 import com.cherry.doc.util.FileManager.checkPdfByPath
 import com.cherry.doc.util.FileManager.isPdfEncrypted
+import com.cherry.doc.util.FileManager.openDoc
 import com.cherry.doc.util.FileManager.removePdfPasswordByPath
 import com.cherry.doc.util.FileManager.unlockPdfToCache
 import com.cherry.doc.util.formatDateTime
@@ -89,7 +90,7 @@ class PdfTabPager : Fragment() {
                 if (file.extension.lowercase() == "pdf" && isPdfEncrypted(file)) {
                     showInputPasswordDialog(file)
                 } else {
-                    openDoc(path, DocSourceType.PATH)
+                    openDoc(path, DocSourceType.PATH, activity = requireActivity())
                 }
             }
 
@@ -280,7 +281,7 @@ class PdfTabPager : Fragment() {
 
             launch(Dispatchers.Main) {
                 if (unlocked != null && unlocked.exists()) {
-                    openDoc(unlocked.absolutePath, DocSourceType.PATH)
+                    openDoc(unlocked.absolutePath, DocSourceType.PATH, activity = requireActivity())
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -325,15 +326,6 @@ class PdfTabPager : Fragment() {
             return false
         }
         return true
-    }
-
-    fun openDoc(path: String, docSourceType: Int, type: Int? = null) {
-        DocViewerActivity.Companion.launchDocViewer(
-            requireActivity(),
-            docSourceType,
-            path,
-            type
-        )
     }
 
     private fun loadData() {
